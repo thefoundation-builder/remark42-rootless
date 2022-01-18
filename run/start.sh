@@ -28,11 +28,12 @@ myclone() {
 export GIT_SSH_COMMAND='/usr/bin/ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts'
 echo git clone -c core.sshCommand="/usr/bin/ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts" $@ ;
 git clone -c core.sshCommand="/usr/bin/ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts" $@  2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP address "  ; } ;
+
+git config --global user.name "remarks42rootless" &>/dev/null
+git config --global user.email "you@example.com"  &>/dev/null
 mypush() {
 export GIT_SSH_COMMAND='/usr/bin/ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts'
-git config --global user.name "rootless" &>/dev/null
-git config --global user.email "you@example.com"  &>/dev/null
-git config user.name "rootless" &>/dev/null
+git config user.name "remarks42rootless" &>/dev/null
 git config user.email "you@example.com" &>/dev/null
 git add -A  ;git commit -m $(date +%F_%T)"auto";
 git push $@  --force 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP address " -e "To "; } ;
