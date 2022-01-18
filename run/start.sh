@@ -13,14 +13,14 @@ echo "INIT"
 
 mkdir ~/.ssh -p
 #apk add --no-cache git bash openssh-client
-[[ -z "$GIT_PATH" ]] || export  GIT_PATH=/srv/var
+[[ -z "$GITPATH" ]] || export  GITPATH=/srv/var
 echo "$GIT_REPO_PUBKEY"|base64 -d > ~/.ssh/id_rsa.pub
 echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
 chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
 ## keyscan
 oneline() { tr -d '\n' ; } ;
 
-test -e $GIT_PATH || mkdir  -p "$GIT_PATH"
+test -e $GITPATH || mkdir  -p "$GITPATH"
 ssh-keyscan  gitlab.com >>  ~/.ssh/known_hosts 2>&1 | oneline
 ssh-keyscan  github.com >>  ~/.ssh/known_hosts  2>&1 | oneline
 
@@ -38,7 +38,9 @@ git config user.email "you@example.com" &>/dev/null
 git push $@  2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP address " -e "To "; } ;
 
 
-myclone ${GIT_REPO_SYNC}  ${GIT_PATH} || mkdir -p ${STORE_BOLT_PATH}
+#myclone ${GIT_REPO_SYNC}  ${GITPATH} || mkdir -p  ${GITPATH}
+#DO NOT RUN WITHOUT STORAGE FROM GIT 
+myclone ${GIT_REPO_SYNC}  ${GITPATH}
 [[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH" 
 mkdir -p ${STORE_BOLT_PATH}
 ( sleep 10; [[ -z "$SLEEPINTER" ]]   &&  SLEEPINTER=90; while (true);do ( cd ${GIT_PATH} ; git add -A  ;git commit -m $(date +%F_%T)"auto"; mypush ) ; [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )  ; sleep $SLEEPINTER ; done ) &  
