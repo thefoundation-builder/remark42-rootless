@@ -13,7 +13,7 @@ echo "INIT"
 
 mkdir ~/.ssh -p
 #apk add --no-cache git bash openssh-client
-[[ -z "$GITPATH" ]] && export  GITPATH=/srv/var
+[[ -z "$GITPATH" ]] && export  GITPATH=/srv/
 echo "$GIT_REPO_PUBKEY"|base64 -d > ~/.ssh/id_rsa.pub
 echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
 chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
@@ -41,11 +41,28 @@ git push $@  --force 2>&1|grep -v -e "Warning: Permanently added the RSA host ke
 
 #myclone ${GIT_REPO_SYNC}  ${GITPATH} || mkdir -p  ${GITPATH}
 #DO NOT RUN WITHOUT STORAGE FROM GIT 
-myclone ${GIT_REPO_SYNC}  ${GITPATH}
+myclone ${GIT_REPO_SYNC} /tmp/gitstorage 
+echo init:copyDir
+(cd /tmp/gitstorage/ ;find -type d|grep -v ".git"|while read $mydir ;do cp -rv  "$mydir"  ${GITPATH}/"$mydir" ;done)
+echo init:copyFile
+(cd /tmp/gitstorage/ ;find -type f|grep -v ".git"|while read $myfile;do cp -rv  "$myfile" ${GITPATH}/"$myfile" ;done)
+
 [[ -z "$GITPATH" ]] || ( cd "${GITPATH}" && git pull )
 [[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH" 
+
 mkdir -p ${STORE_BOLT_PATH}
-( sleep 10;  while (true);do ( cd ${GITPATH} ; pwd ; mypush ) ; [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )  ; sleep 90 ; done ) &  
+( sleep 10;  while (true);do ( 
+                             
+                             [[ -z "$GITPATH" ]] || ( 
+                                     cd ${GITPATH} ; pwd ;
+                                     find -type d|grep -v ".git"|while read $mydir ;do cp -rv  "$mydir"  /tmp/gitstorage/"$mydir" ;done
+                                     find -type f|grep -v ".git"|while read $myfile;do cp -rv  "$myfile" /tmp/gitstorage/"$myfile" ;done
+                                     cd /tmp/gitstorage/ ;
+                                     mypush
+                                     )
+                              ) ; 
+                            
+                            [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )  ; sleep 90 ; done ) &  
 
 echo "PREP"
 #cat /init.orig.sh
