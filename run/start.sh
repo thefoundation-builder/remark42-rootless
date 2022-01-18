@@ -13,7 +13,7 @@ echo "INIT"
 
 mkdir ~/.ssh -p
 #apk add --no-cache git bash openssh-client
-[[ -z "$GITPATH" ]] || export  GITPATH=/srv/var
+[[ -z "$GITPATH" ]] && export  GITPATH=/srv/var
 echo "$GIT_REPO_PUBKEY"|base64 -d > ~/.ssh/id_rsa.pub
 echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
 chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
