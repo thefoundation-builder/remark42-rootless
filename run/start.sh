@@ -58,7 +58,7 @@ test -e /srv/var || mkdir /srv/var
                              [[ -z "$GITPATH" ]] || ( 
                                      cd ${GITPATH} ; pwd ;
                                      find -type d|grep -v ".git"|while read mydir ;do test -e /tmp/gitstorage/"$mydir"  || mkdir -p test /tmp/gitstorage/"$mydir" ;done
-                                     find -type f|grep -v ".git"|while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done
+                                     find -type f|grep -v ".git"|grep -v "^./remark42$" |while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done
                                      cd /tmp/gitstorage/ ;
                                      mypush
                                      )
