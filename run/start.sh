@@ -19,7 +19,7 @@ echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
 chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
 ## keyscan
 oneline() { tr -d '\n' ; } ;
-
+DEBUG
 test -e $GITPATH || mkdir  -p "$GITPATH"
 ssh-keyscan  gitlab.com >>  ~/.ssh/known_hosts 2>&1 | oneline
 ssh-keyscan  github.com >>  ~/.ssh/known_hosts  2>&1 | oneline
@@ -60,9 +60,9 @@ mkdir -p ${STORE_BOLT_PATH}
                                      cd /tmp/gitstorage/ ;
                                      mypush
                                      )
-                              ) ; 
                             
-                            [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )  ; sleep 90 ; done ) &  
+                            [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )  ; sleep 90 ; done )
+ ) &  
 
 echo "PREP"
 #cat /init.orig.sh
