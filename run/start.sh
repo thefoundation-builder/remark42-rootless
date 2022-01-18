@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/bash
 echo "INIT"
 [[ -z "$SLEEPINTER" ]]        &&  SLEEPINTER=90
 [[ -z "$GIT_REPO_KEY" ]]      &&  echo "NO KEY ;CANNOT RUN"
@@ -13,14 +13,14 @@ echo "INIT"
 
 mkdir ~/.ssh -p
 #apk add --no-cache git bash openssh-client
-[[ -z "$GIT_PATH" ]] || GIT_PATH=/srv/var
+[[ -z "$GIT_PATH" ]] || export  GIT_PATH=/srv/var
 echo "$GIT_REPO_PUBKEY"|base64 -d > ~/.ssh/id_rsa.pub
 echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
 chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
 ## keyscan
 oneline() { tr -d '\n' ; } ;
 
-test -e $GIT_PATH || mkdir $GIT_PATH
+test -e $GIT_PATH || mkdir  -p "$GIT_PATH"
 ssh-keyscan  gitlab.com >>  ~/.ssh/known_hosts 2>&1 | oneline
 ssh-keyscan  github.com >>  ~/.ssh/known_hosts  2>&1 | oneline
 
