@@ -19,7 +19,6 @@ echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
 chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
 ## keyscan
 oneline() { tr -d '\n' ; } ;
-DEBUG
 test -e $GITPATH || mkdir  -p "$GITPATH"
 ssh-keyscan  gitlab.com >>  ~/.ssh/known_hosts 2>&1 | oneline
 ssh-keyscan  github.com >>  ~/.ssh/known_hosts  2>&1 | oneline
