@@ -36,7 +36,7 @@ export GIT_SSH_COMMAND='/usr/bin/ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.s
 git config user.name "remarks42rootless" &>/dev/null
 git config user.email "you@example.com" &>/dev/null
 git add -A  ;git commit -m $(date +%F_%T)"auto";
-git push $@  --force 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP address " -e "To "; } ;
+git push $@ 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP address " -e "To "; } ;
 
 
 #myclone ${GIT_REPO_SYNC}  ${GITPATH} || mkdir -p  ${GITPATH}
@@ -61,7 +61,7 @@ mkdir -p ${STORE_BOLT_PATH}
                                      mypush
                                      )
                             
-                            [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )  ; sleep 90 ; done )
+                            [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )    ) ; sleep 90; done
  ) &  
 
 echo "PREP"
