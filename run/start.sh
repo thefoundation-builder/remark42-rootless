@@ -32,6 +32,7 @@ git clone -c core.sshCommand="/usr/bin/ssh -i ~/.ssh/id_rsa -o UserKnownHostsFil
 
 git config --global user.name "remarks42rootless" &>/dev/null
 git config --global user.email "you@example.com"  &>/dev/null
+
 mypush() {
 export GIT_SSH_COMMAND='/usr/bin/ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts'
 git config user.name "remarks42rootless" &>/dev/null
