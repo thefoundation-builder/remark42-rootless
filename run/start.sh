@@ -36,7 +36,7 @@ git config --global user.email "you@example.com"  &>/dev/null
 git config user.name "rootless" &>/dev/null
 git config user.email "you@example.com" &>/dev/null
 git add -A  ;git commit -m $(date +%F_%T)"auto";
-git push $@  2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP address " -e "To "; } ;
+git push $@  --force 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP address " -e "To "; } ;
 
 
 #myclone ${GIT_REPO_SYNC}  ${GITPATH} || mkdir -p  ${GITPATH}
