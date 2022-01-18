@@ -42,6 +42,7 @@ git push $@  2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP
 #myclone ${GIT_REPO_SYNC}  ${GITPATH} || mkdir -p  ${GITPATH}
 #DO NOT RUN WITHOUT STORAGE FROM GIT 
 myclone ${GIT_REPO_SYNC}  ${GITPATH}
+[[ -z "$GITPATH" ]] || ( cd "${GITPATH}" && git pull )
 [[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH" 
 mkdir -p ${STORE_BOLT_PATH}
 ( sleep 10;  while (true);do ( cd ${GITPATH} ; pwd; mypush ) ; [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )  ; [[ -z "$SLEEPINTER" ]]   &&  export SLEEPINTER=90;sleep $SLEEPINTER ; done ) &  
