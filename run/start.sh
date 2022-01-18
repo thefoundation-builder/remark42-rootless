@@ -45,8 +45,8 @@ git push $@ 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP 
 #DO NOT RUN WITHOUT STORAGE FROM GIT 
 myclone ${GIT_REPO_SYNC} /tmp/gitstorage 
 [[ -z "$GITPATH" ]] || mkdir -p "$GITPATH"
-( echo "init:copyDir  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -type d|grep -v ".git"|while read mydir ;do cp -rv  "$mydir"  ${GITPATH}/"$mydir" ;done)
-( echo "init:copyFile ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -type f|grep -v ".git"|while read myfile;do cp -rv  "$myfile" ${GITPATH}/"$myfile" ;done)
+( echo "init:copyDir  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -type d|grep -v ".git"|while read mydir ;do mkdir -p  ${GITPATH}/"$mydir" ;done)
+( echo "init:copyFile ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -type f|grep -v ".git"|while read myfile;do cp -v  "$myfile" ${GITPATH}/"$myfile" ;done)
 
 [[ -z "$GITPATH" ]] || ( cd "${GITPATH}" && git pull )
 [[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH" 
@@ -57,8 +57,8 @@ test -e /srv/var || mkdir /srv/var
                              
                              [[ -z "$GITPATH" ]] || ( 
                                      cd ${GITPATH} ; pwd ;
-                                     find -type d|grep -v ".git"|while read mydir ;do cp -rv  "$mydir"  /tmp/gitstorage/"$mydir" ;done
-                                     find -type f|grep -v ".git"|while read myfile;do cp -rv  "$myfile" /tmp/gitstorage/"$myfile" ;done
+                                     find -type d|grep -v ".git"|while read mydir ;do test -e /tmp/gitstorage/"$mydir"  || mkdir -p test /tmp/gitstorage/"$mydir" ;done
+                                     find -type f|grep -v ".git"|while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done
                                      cd /tmp/gitstorage/ ;
                                      mypush
                                      )
