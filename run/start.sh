@@ -8,9 +8,9 @@ echo "INIT"
 [[ -z "$GIT_REPO_SYNC" ]]     &&  echo "NO REPO;CANNOT RUN"
 [[ -z "$GIT_REPO_SYNC" ]]     &&  exit 1
 
-[[ -z "$BACKUP_PATH" ]] && BACKUP_PATH=/tmp/backup
-[[ -z "$BACKUP_PATH" ]] && BACKUP_PATH=/tmp/backup
-
+[[ -z "$BACKUP_PATH" ]] &&    BACKUP_PATH=/tmp/backup
+[[ -z "$BACKUP_PATH" ]] &&    BACKUP_PATH=/tmp/backup
+[[ -z "STORE_BOLT_PATH" ]] && STORE_BOLT_PATH=/srv/var
 mkdir ~/.ssh -p
 #apk add --no-cache git bash openssh-client
 [[ -z "$GITPATH" ]] && export  GITPATH=/srv/
@@ -45,7 +45,6 @@ git push $@ 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP 
 #DO NOT RUN WITHOUT STORAGE FROM GIT 
 myclone ${GIT_REPO_SYNC} /tmp/gitstorage 
 [[ -z "$GITPATH" ]] || mkdir -p "$GITPATH"
-
 ( echo "init:copyDir  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -type d|grep -v ".git"|while read mydir ;do cp -rv  "$mydir"  ${GITPATH}/"$mydir" ;done)
 ( echo "init:copyFile ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -type f|grep -v ".git"|while read myfile;do cp -rv  "$myfile" ${GITPATH}/"$myfile" ;done)
 
@@ -53,12 +52,13 @@ myclone ${GIT_REPO_SYNC} /tmp/gitstorage
 [[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH" 
 
 mkdir -p ${STORE_BOLT_PATH}
+test -e /srv/var || mkdir /srv/var
 ( sleep 10;  while (true);do ( 
                              
                              [[ -z "$GITPATH" ]] || ( 
                                      cd ${GITPATH} ; pwd ;
-                                     find -type d|grep -v ".git"|while read $mydir ;do cp -rv  "$mydir"  /tmp/gitstorage/"$mydir" ;done
-                                     find -type f|grep -v ".git"|while read $myfile;do cp -rv  "$myfile" /tmp/gitstorage/"$myfile" ;done
+                                     find -type d|grep -v ".git"|while read mydir ;do cp -rv  "$mydir"  /tmp/gitstorage/"$mydir" ;done
+                                     find -type f|grep -v ".git"|while read myfile;do cp -rv  "$myfile" /tmp/gitstorage/"$myfile" ;done
                                      cd /tmp/gitstorage/ ;
                                      mypush
                                      )
