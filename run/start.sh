@@ -5,7 +5,7 @@
 ## echo GIT_REPO_PUBKEY=$(bae64 -w0 .ssh/id_rsa.pub ) >> /tmp/env
 echo "INIT"
 
-
+[[ -z "$REMARK_URL" ]] && export REMARK_URL=127.0.0.1:8080
 [[ -z "$SLEEPINTER" ]]        &&  SLEEPINTER=90
 [[ -z "$GIT_REPO_KEY" ]]      &&  echo "NO KEY ;CANNOT RUN"
 [[ -z "$GIT_REPO_KEY" ]]      &&  exit 1
@@ -87,7 +87,7 @@ while (true);do nginx -g "daemon off;" ;sleep 5;done &
 echo "FORKING MAIL UI"
 while (true);do su -s /bin/bash -c /usr/local/bin/MailHog mailhog ;sleep 5;done &
 
-[[ -z "$URL" ]] && URL=localhost.lan
+URL=$REMARK_URL
 [[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -n 10 )$RANDOM
 echo "FORKING WEBMENTIOND"
 while (true);do 
