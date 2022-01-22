@@ -77,7 +77,7 @@ test -e /srv/var || mkdir -p /srv/var
 
 echo "PREP"
 
-[[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PAS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
+[[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PASS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
 test -e /${GITPATH}/htpass.mail && rm /${GITPATH}/htpass.mail
 echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail mention_admin
 
@@ -95,7 +95,7 @@ URL=$REMARK_URL
 echo "FORKING WEBMENTIOND"
 while (true);do 
 ##att multiline ahead
-  MAIL_NO_TLS=true MAIL_FROM=webmention-ui.local MAIL_PORT=1025 MAIL_HOST=127.0.0.1   SERVER_AUTH_JWT_SECRET=$JWTSECRET \
+  MAIL_NO_TLS=true MAIL_FROM=webmention-ui.local MAIL_PORT=1025 EMAIL_HOST=127.0.0.1 MAIL_HOST=127.0.0.1   SERVER_AUTH_JWT_SECRET=$JWTSECRET \
    /usr/local/bin/webmentiond serve \
    --public-url=$URL/webmentions    \
    --allowed-target-domains "mydomain.lan" \
@@ -105,7 +105,7 @@ while (true);do
    --verification-timeout=120s \
    --verification-max-redirects=5
 
-
+[[ -z "$SECRET" ]] && export SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 /usr/local/bin/webmentiond serve --database-migrations /var/lib/webmentiond/migrations --database /data/webmentiond.sqlite;sleep 5;done &
 echo "STARTING  REMARK42"
 export REMARK_PORT=8081
