@@ -59,12 +59,12 @@ myclone ${GIT_REPO_SYNC} /tmp/gitstorage
 
 mkdir -p ${STORE_BOLT_PATH}
 test -e /srv/var || mkdir -p /srv/var
-( sleep 10;  while (true);do ( 
+( sleep 60;  while (true);do ( 
                              
                              [[ -z "$GITPATH" ]] || ( 
                                      cd ${GITPATH} ; pwd ;
                                      find -type d|grep -v ".git"|while read mydir ;do test -e /tmp/gitstorage/"$mydir"  || mkdir -p test /tmp/gitstorage/"$mydir" ;done
-                                     find -type f|grep -v ".git"|grep -v "^./remark42$" |while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done
+                                     find -type f|grep -v ".git"|grep -v "^./remark42$" |while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done | sed 's/$/|/g'|tr -d '\n'
                                      cd /tmp/gitstorage/ ;
                                      mypush
                                      )
