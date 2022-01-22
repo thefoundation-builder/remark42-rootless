@@ -51,8 +51,8 @@ git push $@ 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP 
 #DO NOT RUN WITHOUT STORAGE FROM GIT 
 myclone ${GIT_REPO_SYNC} /tmp/gitstorage 
 [[ -z "$GITPATH" ]] || mkdir -p "$GITPATH"
-( echo "init:copyDir  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -type d|grep -v ".git"|while read mydir ;do mkdir -p  ${GITPATH}/"$mydir" ;done)
-( echo "init:copyFile ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -type f|grep -v ".git"|while read myfile;do diff --brief "$myfile" ${GITPATH}/"$myfile"  || cp -v  "$myfile" ${GITPATH}/"$myfile" ;done)
+( echo "init:copyDirs  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type d |grep -v ".git"|while read mydir ;do mkdir -p  ${GITPATH}/"$mydir" ;done)
+( echo "init:copyFile  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type f |grep -v ".git"|while read myfile;do diff --brief "$myfile" ${GITPATH}/"$myfile"  || cp -v  "$myfile" ${GITPATH}/"$myfile" ;done)
 
 [[ -z "$GITPATH" ]] || ( cd "${GITPATH}" && git pull )
 [[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH" 
@@ -70,13 +70,13 @@ test -e /srv/var || mkdir -p /srv/var
                                      )
                             
                             [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )    ) ; sleep 90; done
- ) 
+ ) &
 
 echo "PREP"
 
 [[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PAS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
-test -e /srv/htpass.mail && rm /srv/htpass.mail
-echo $MENTION_ADMINPASS |htpasswd -cBi  /srv/htpass.mail mention_admin
+test -e /${GITPATH}/htpass.mail && rm /${GITPATH}/htpass.mail
+echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail mention_admin
 
 #cat /init.orig.sh
 #printenv
