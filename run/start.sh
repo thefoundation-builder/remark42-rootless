@@ -56,7 +56,7 @@ find /tmp/gitstorage |grep -v /tmp/gitstorage/.git/
 ( echo "init:copyDirs  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type d |grep -v ".git"|while read mydir ;do mkdir -p  ${GITPATH}/"$mydir" ;done)
 ( echo "init:copyFile  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type f |grep -v ".git"|while read myfile;do diff --brief "$myfile" ${GITPATH}/"$myfile"  || cp -v  "$myfile" ${GITPATH}/"$myfile" ;done)
 
-chown -R remark42 /${GITPATH}
+chown -R app /${GITPATH}
 
 #[[ -z "$GITPATH" ]] || ( cd "${GITPATH}" && git pull )
 [[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH" 
@@ -87,7 +87,7 @@ echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail mention_admin
 #printenv
 echo "FORKING nginx"
 while (true);do nginx -g "daemon off;" ;sleep 5;done &
-chown -R remark42 /srv
+chown -R app /srv
 
 echo "FORKING MAIL UI"
 while (true);do su -s /bin/bash -c /usr/local/bin/MailHog mailhog ;sleep 5;done &
