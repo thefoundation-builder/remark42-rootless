@@ -109,5 +109,5 @@ while (true);do
 /usr/local/bin/webmentiond serve --database-migrations /var/lib/webmentiond/migrations --database /data/webmentiond.sqlite;sleep 5;done &
 echo "STARTING  REMARK42"
 export REMARK_PORT=8081
-bash /init.orig.sh /srv/remark42 server
+bash /init.orig.sh /srv/remark42 server --secret $SECRET
 #ls -lh1 /srv/remark42 /srv/remark42 server
