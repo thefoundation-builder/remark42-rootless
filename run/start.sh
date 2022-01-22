@@ -68,6 +68,8 @@ test -e /srv/var || mkdir /srv/var
 
 echo "PREP"
 #cat /init.orig.sh
-echo STARTING
+echo "FORKING WEBMENTIOND"
+while (true);do /usr/local/bin/webmentiond serve --database-migrations /var/lib/webmentiond/migrations --database /data/webmentiond.sqlite;sleep 5;done
+echo "STARTING  REMARK42"
 bash /init.orig.sh /srv/remark42 server
 #ls -lh1 /srv/remark42 /srv/remark42 server
