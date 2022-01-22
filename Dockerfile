@@ -36,5 +36,5 @@ copy run/start.sh /init.sh
 #copy run/start.sh /srv/init.sh
 VOLUME ["/srv"]
 RUN /usr/local/bin/webmentiond  --help || true 
-RUN /srv/remark42 --help
+RUN /srv/remark42 --help 2>&1 |grep avatar
 RUN chmod +x /init.sh
