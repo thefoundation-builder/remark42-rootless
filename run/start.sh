@@ -89,9 +89,9 @@ while (true);do nginx -g "daemon off;" ;sleep 5;done &
 
 echo "FORKING MAIL UI"
 while (true);do su -s /bin/bash -c /usr/local/bin/MailHog mailhog ;sleep 5;done &
-
+echo "PREP WEBMENTIOND"
 URL=$REMARK_URL
-[[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -n 10 )$RANDOM
+[[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 echo "FORKING WEBMENTIOND"
 while (true);do 
 ##att multiline ahead
