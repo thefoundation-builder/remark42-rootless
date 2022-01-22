@@ -84,7 +84,7 @@ test -e /srv/var || mkdir -p /srv/var
                             [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )    ) ; 
                             cd $GITPATH; sleep 30;inotifywatch -e delete -e create -e move -e move_self -e modify -e attrib $(find $GITPATH)  ; done
  ) &
-
+ 
 echo "PREP"
 
 [[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PASS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
