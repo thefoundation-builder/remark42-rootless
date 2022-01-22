@@ -104,7 +104,8 @@ while (true);do
    --verification-timeout=120s \
    --verification-max-redirects=5
 [[ -z "$SECRET" ]] && echo no secret set
-[[ -z "$SECRET" ]] && { SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM ; export SECRET=$SECRET ; } ;
+[[ -z "$SECRET" ]] && SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM 
+export SECRET=$SECRET
 /usr/local/bin/webmentiond serve --database-migrations /var/lib/webmentiond/migrations --database /data/webmentiond.sqlite;sleep 5;done &
 echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
 export REMARK_PORT=8081
