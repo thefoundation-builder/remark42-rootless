@@ -14,8 +14,8 @@ COPY pkg/server/migrations /var/lib/webmentiond/migrations
 COPY --from=webmention /usr/local/bin/webmentiond /usr/local/bin/webmentiond 
 COPY --from=webmention /var/lib/webmentiond/frontend/dist /var/lib/webmentiond/frontend/dist
 COPY --from=webmention /var/lib/webmentiond/frontend/css /var/lib/webmentiond/frontend/css
-COPY --from=webmention /var/lib/webmentiond/frontend/index.html
-COPY --from=webmention /var/lib/webmentiond/frontend/demo.html
+COPY --from=webmention /var/lib/webmentiond/frontend/index.html  /var/lib/webmentiond/frontend/index.html
+COPY --from=webmention /var/lib/webmentiond/frontend/demo.html  /var/lib/webmentiond/frontend/demo.html
 WORKDIR /var/lib/webmentiond
 #USER 1500
 #ENTRYPOINT ["/usr/local/bin/webmentiond", "serve", "--database-migrations", "/var/lib/webmentiond/migrations", "--database", "/data/webmentiond.sqlite"]
