@@ -68,10 +68,13 @@ test -e /srv/var || mkdir -p /srv/var
 ( sleep 60;  while (true);do ( 
                              
                              [[ -z "$GITPATH" ]] || ( 
+                               cd /tmp/gitstorage
+                               git pull ;
                                      cd ${GITPATH} ; pwd ;
                                      find -type d -mindepth 1|grep -v ".git"|while read mydir ;do test -e /tmp/gitstorage/"$mydir"  || mkdir -p test /tmp/gitstorage/"$mydir" ;done
-                                     find -type f -mindepth 1 |grep -v ".git"|grep -v -e "^./remark42$" -e "^./web$" |while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done 
+                                     find -type f -mindepth 1 |grep -v -e  "^/.git" -e "^./remark42$" -e "^./web/" |while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done 
                                      cd /tmp/gitstorage/ ;
+                                     
                                      git add -A
                                      mypush --force
                                      ) |sed 's/$/|/g' |tr -d '\n'
