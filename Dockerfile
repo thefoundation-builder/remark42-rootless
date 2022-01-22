@@ -13,7 +13,7 @@ USER 0
 #VOLUME ["/data"]
 #RUN adduser -u 1500 -h /data -H -D webmentiond && \
 RUN    mkdir -p /var/lib/webmentiond/frontend
-COPY pkg/server/migrations /var/lib/webmentiond/migrations
+COPY --from=webmention /var/lib/webmentiond/migrations /var/lib/webmentiond/migrations
 COPY --from=webmention /usr/local/bin/webmentiond /usr/local/bin/webmentiond 
 COPY --from=webmention /var/lib/webmentiond/frontend/dist /var/lib/webmentiond/frontend/dist
 COPY --from=webmention /var/lib/webmentiond/frontend/css /var/lib/webmentiond/frontend/css
