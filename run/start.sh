@@ -4,7 +4,7 @@
 ## echo GIT_REPO_PUBKEY=$(base64 -w0 .ssh/id_rsa.pub ) >> /tmp/.env
 ## echo GIT_REPO_PUBKEY=$(bae64 -w0 .ssh/id_rsa.pub ) >> /tmp/env
 echo "INIT"
-
+                   
 
 [[ -z "$REMARK_URL" ]] && export REMARK_URL=http://127.0.0.1:8080
 [[ -z "$SLEEPINTER" ]]        &&  SLEEPINTER=90
