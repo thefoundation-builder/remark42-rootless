@@ -5,6 +5,7 @@
 ## echo GIT_REPO_PUBKEY=$(bae64 -w0 .ssh/id_rsa.pub ) >> /tmp/env
 echo "INIT"
 
+
 [[ -z "$REMARK_URL" ]] && export REMARK_URL=127.0.0.1:8080
 [[ -z "$SLEEPINTER" ]]        &&  SLEEPINTER=90
 [[ -z "$GIT_REPO_KEY" ]]      &&  echo "NO KEY ;CANNOT RUN"
@@ -17,6 +18,7 @@ echo "INIT"
 [[ -z "$BACKUP_PATH" ]] &&    BACKUP_PATH=/tmp/backup
 [[ -z "$BACKUP_PATH" ]] &&    BACKUP_PATH=/tmp/backup
 [[ -z "STORE_BOLT_PATH" ]] && STORE_BOLT_PATH=/srv/var
+[[ -z "$ALLOWED_DOMAINS" ]] && export ALLOWED_DOMAINS=mydomain.lan
 mkdir ~/.ssh -p
 #apk add --no-cache git bash openssh-clientSECRET=
 [[ -z "$GITPATH" ]] && export  GITPATH=/srv/
@@ -97,7 +99,7 @@ URL=$REMARK_URL
 echo "FORKING WEBMENTIOND"
 while (true);do 
 ##att multiline ahead
-  su -s /bin/bash -c 'MAIL_NO_TLS=true MAIL_FROM=mails@webmention-ui.local MAIL_PORT=1025 EMAIL_HOST=127.0.0.1 MAIL_HOST=127.0.0.1   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8081 --allowed-target-domains "mydomain.lan"    --auth-admin-emails "admina@abc.de"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5' app;sleep 5;done 
+  su -s /bin/bash -c 'MAIL_NO_TLS=true MAIL_FROM=mails@webmention-ui.local MAIL_PORT=1025 EMAIL_HOST=127.0.0.1 MAIL_HOST=127.0.0.1   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "admina@abc.de"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5' app;sleep 5;done 
 ##[[ -z "$SECRET" ]] && echo no secret set
 ##[[ -z "$SECRET" ]] && SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM 
 ##export SECRET=${SECRET}
