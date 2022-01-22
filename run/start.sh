@@ -1,5 +1,11 @@
 #!/bin/bash
+
+## e.g.
+## echo GIT_REPO_PUBKEY=$(base64 -w0 .ssh/id_rsa.pub ) >> /tmp/.env
+## echo GIT_REPO_PUBKEY=$(bae64 -w0 .ssh/id_rsa.pub ) >> /tmp/env
 echo "INIT"
+
+
 [[ -z "$SLEEPINTER" ]]        &&  SLEEPINTER=90
 [[ -z "$GIT_REPO_KEY" ]]      &&  echo "NO KEY ;CANNOT RUN"
 [[ -z "$GIT_REPO_KEY" ]]      &&  exit 1
@@ -52,7 +58,7 @@ myclone ${GIT_REPO_SYNC} /tmp/gitstorage
 [[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH" 
 
 mkdir -p ${STORE_BOLT_PATH}
-test -e /srv/var || mkdir /srv/var
+test -e /srv/var || mkdir -p /srv/var
 ( sleep 10;  while (true);do ( 
                              
                              [[ -z "$GITPATH" ]] || ( 
@@ -68,6 +74,7 @@ test -e /srv/var || mkdir /srv/var
 
 echo "PREP"
 #cat /init.orig.sh
+printenv
 echo "FORKING WEBMENTIOND"
 while (true);do /usr/local/bin/webmentiond serve --database-migrations /var/lib/webmentiond/migrations --database /data/webmentiond.sqlite;sleep 5;done
 echo "STARTING  REMARK42"
