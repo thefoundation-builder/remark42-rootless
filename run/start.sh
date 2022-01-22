@@ -74,7 +74,7 @@ test -e /srv/var || mkdir -p /srv/var
                                      cd /tmp/gitstorage/ ;
                                      git add -A
                                      mypush --force
-                                     )
+                                     ) |sed 's/$/|/g' |tr -d '\n'
                             
                             [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )    ) ; 
                           inotifywatch $(find $GITPATH)  ; done
