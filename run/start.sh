@@ -50,6 +50,8 @@ git push $@ 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP 
 #myclone ${GIT_REPO_SYNC}  ${GITPATH} || mkdir -p  ${GITPATH}
 #DO NOT RUN WITHOUT STORAGE FROM GIT 
 myclone ${GIT_REPO_SYNC} /tmp/gitstorage 
+echo "CLONED"
+find /tmp/gitstorage 
 [[ -z "$GITPATH" ]] || mkdir -p "$GITPATH"
 ( echo "init:copyDirs  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type d |grep -v ".git"|while read mydir ;do mkdir -p  ${GITPATH}/"$mydir" ;done)
 ( echo "init:copyFile  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type f |grep -v ".git"|while read myfile;do diff --brief "$myfile" ${GITPATH}/"$myfile"  || cp -v  "$myfile" ${GITPATH}/"$myfile" ;done)
