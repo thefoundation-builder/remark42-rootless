@@ -80,8 +80,10 @@ while (true);do nginx -g "daemon off;" ;sleep 5;done &
 
 
 echo "FORKUNG MAIL UI"
-while (true);do su -s /bin/bash /usr/local/bin/MailHog mailhog ;sleep 5;done &
+while (true);do su -s /bin/bash -c /usr/local/bin/MailHog mailhog ;sleep 5;done &
 
+[[ -z "$URL" ]] && URL=localhost.lan
+[[ -z "$SERVER_AUTH_JWT_SECRET" ]] && SERVER_AUTH_JWT_SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -n 10 )$RANDOM
 echo "FORKING WEBMENTIOND"
 while (true);do 
 ##att multiline ahead
