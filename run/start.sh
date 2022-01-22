@@ -110,7 +110,10 @@ while (true);do
 chown -R app /srv
 chmod ug+w /srv
 pwd
-
+(sleep 30;
+echo "testing interfaces" ;curl -kLv 127.0.0.1:8081/web/embed.js > /dev/null;echo "###";curl -kLv 127.0.0.1:8023/ui/ > /dev/null;
+echo "testing interfaces (nginx)" ;curl -kLv 127.0.0.1:8080/web/embed.js > /dev/null;echo "###";curl -kLv 127.0.0.1:8080/ui/ > /dev/null;
+ ) &
 cd /srv
 echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
 export REMARK_PORT=8081
