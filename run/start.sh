@@ -108,6 +108,7 @@ echo "PREP WEBMENTIOND"
 URL=$REMARK_URL
 [[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 echo "FORKING WEBMENTIOND"
+export MAIL_NO_TLS=true
 echo "RUN: "'MAIL_NO_TLS=true MAIL_PASSWORD=doesnotmatter MAIL_USER=mails@webmention-ui.local MAIL_FROM=mails@webmention-ui.local MAIL_PORT=1025 EMAIL_HOST=127.0.0.1 MAIL_HOST=127.0.0.1   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "admina@webmention-ui.local"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 --verbose'
 while (true);do 
 ##att multiline ahead
