@@ -104,6 +104,7 @@ while (true);do
 ##[[ -z "$SECRET" ]] && SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM 
 ##export SECRET=${SECRET}
 chown -R app /srv
+chmod ug+w /srv
 pwd
 
 cd /srv
