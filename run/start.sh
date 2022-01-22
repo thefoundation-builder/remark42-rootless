@@ -8,23 +8,27 @@ echo "INIT"
 
 [[ -z "$REMARK_URL" ]] && export REMARK_URL=http://127.0.0.1:8080
 [[ -z "$SLEEPINTER" ]]        &&  SLEEPINTER=90
-[[ -z "$GIT_REPO_KEY" ]]      &&  echo "NO KEY ;CANNOT RUN"
-[[ -z "$GIT_REPO_KEY" ]]      &&  exit 1
-[[ -z "$GIT_REPO_PUBKEY" ]]   &&  echo "NO PuBKEY ;CANNOT RUN"
-[[ -z "$GIT_REPO_PUBKEY" ]]   &&  exit 1
+
+
 [[ -z "$GIT_REPO_SYNC" ]]     &&  echo "NO REPO;CANNOT RUN"
 [[ -z "$GIT_REPO_SYNC" ]]     &&  exit 1
+[[ -z "$GIT_REPO_KEY" ]]      &&  echo "NO KEY ;CANNOT RUN"
+[[ -z "$GIT_REPO_KEY" ]]      &&  exit 1
+
+[[ -z "$GIT_REPO_PUBKEY" ]]   &&  echo "NO PuBKEY ;CANNOT RUN"
+[[ -z "$GIT_REPO_PUBKEY" ]]   &&  exit 1
 
 [[ -z "$BACKUP_PATH" ]] &&    BACKUP_PATH=/tmp/backup
 [[ -z "$BACKUP_PATH" ]] &&    BACKUP_PATH=/tmp/backup
 [[ -z "STORE_BOLT_PATH" ]] && STORE_BOLT_PATH=/srv/varmodify
 [[ -z "$ALLOWED_DOMAINS" ]] && export ALLOWED_DOMAINS=mydomain.lan
+
 mkdir ~/.ssh -p
 #apk add --no-cache git bash openssh-clientSECRET=
 [[ -z "$GITPATH" ]] && export  GITPATH=/srv/
 echo "$GIT_REPO_PUBKEY"|base64 -d > ~/.ssh/id_rsa.pub
 echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
-chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
+chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsaMAIL_USER
 ## keyscan
 oneline() { tr -d '\n' ; } ;
 [[ -z "$GITPATH" ]] && GITPATH=/srv/
