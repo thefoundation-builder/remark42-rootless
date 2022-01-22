@@ -6,7 +6,9 @@ FROM umputun/remark42:latest
 
 #FROM alpine:3.14
 FROM zerok/webmentiond as webmention
-RUN apk add --no-cache sqlite-dev golang
+RUN echo heyhey
+
+#RUN apk add --no-cache sqlite-dev golang
 #VOLUME ["/data"]
 #RUN adduser -u 1500 -h /data -H -D webmentiond && \
 RUN    mkdir -p /var/lib/webmentiond/frontend
