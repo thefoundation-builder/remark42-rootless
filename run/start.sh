@@ -87,8 +87,7 @@ while (true);do su -s /bin/bash -c /usr/local/bin/MailHog mailhog ;sleep 5;done 
 echo "FORKING WEBMENTIOND"
 while (true);do 
 ##att multiline ahead
-  MAIL_NO_TLS=true MAIL_FROM=webmention-ui.local MAIL_PORT=1025 MAIL_HOST=127.0.0.1 \
-  SERVER_AUTH_JWT_SECRET=$JWTSECRET \
+  MAIL_NO_TLS=true MAIL_FROM=webmention-ui.local MAIL_PORT=1025 MAIL_HOST=127.0.0.1   SERVER_AUTH_JWT_SECRET=$JWTSECRET \
    /usr/local/bin/webmentiond serve \
    --public-url=$URL/webmentions    \
    --allowed-target-domains "mydomain.lan" \
