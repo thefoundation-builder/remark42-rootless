@@ -1,4 +1,7 @@
 
+## integrate mailhog
+FROM mailhog/mailhog AS mailhog
+RUN echo hi
 
 
 ### integrate webmentiond
@@ -7,6 +10,8 @@
 FROM zerok/webmentiond as webmention
 RUN echo heyhey
 
+
+## build from remark42
 FROM umputun/remark42:latest
 USER 0
 RUN apk add --no-cache sqlite-dev # golang
@@ -23,12 +28,17 @@ WORKDIR /var/lib/webmentiond
 #USER 1500
 #ENTRYPOINT ["/usr/local/bin/webmentiond", "serve", "--database-migrations", "/var/lib/webmentiond/migrations", "--database", "/data/webmentiond.sqlite"]
 
+RUN adduser -D -u 1000 mailhog
+COPY --from=mailhog /usr/local/bin/MailHog /usr/local/bin/MailHog
 
+### Expose the SMTP and HTTP ports:
+##EXPOSE 1025 8025
 
+COPY default.conf /etc/nginx/http.d/
 #RUN apk add --no-cache git bash jq 
 #RUN apk add --no-cache curl findutils  psmisc psutils
 #RUN apk add --no-cache openssh-client
-RUN apk add curl findutils git bash jq  openssh-client inotify-tools 
+RUN apk add curl findutils git bash jq  openssh-client inotify-tools nginx
 RUN mv /init.sh /init.orig.sh
 #RUN ln -sf /run/start.sh /init.sh
 #RUN ln -sf /start/init.sh /srv/init.sh 

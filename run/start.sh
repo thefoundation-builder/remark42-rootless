@@ -75,8 +75,29 @@ test -e /srv/var || mkdir -p /srv/var
 echo "PREP"
 #cat /init.orig.sh
 printenv
+echo "FORKING nginx"
+while (true);do nginx -g "daemon off;" ;sleep 5;done &
+
+
+echo "FORKUNG MAIL UI"
+while (true);do su -s /bin/bash /usr/local/bin/MailHog mailhog ;sleep 5;done &
+
 echo "FORKING WEBMENTIOND"
-while (true);do /usr/local/bin/webmentiond serve --database-migrations /var/lib/webmentiond/migrations --database /data/webmentiond.sqlite;sleep 5;done
+while (true);do 
+##att multiline ahead
+  MAIL_NO_TLS=true MAIL_FROM=webmention-ui.local MAIL_PORT=1025 MAIL_HOST=127.0.0.1 \
+  SERVER_AUTH_JWT_SECRET=$JWTSECRET \
+   /usr/local/bin/webmentiond serve \
+   --public-url=$URL/webmentions    \
+   --allowed-target-domains "mydomain.lan" \
+   --auth-admin-emails "admina@abc.de"     \
+   --database-migrations /var/lib/webmentiond/migrations \
+   --database /srv/webmentiond.sqlite  \
+   --verification-timeout=120s \
+   --verification-max-redirects=5
+
+
+/usr/local/bin/webmentiond serve --database-migrations /var/lib/webmentiond/migrations --database /data/webmentiond.sqlite;sleep 5;done &
 echo "STARTING  REMARK42"
-bash /init.orig.sh /srv/remark42 server
+bash /init.orig.sh /srv/remark42 server --port=8081
 #ls -lh1 /srv/remark42 /srv/remark42 server
