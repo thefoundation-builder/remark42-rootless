@@ -18,7 +18,7 @@ echo "INIT"
 [[ -z "$BACKUP_PATH" ]] &&    BACKUP_PATH=/tmp/backup
 [[ -z "STORE_BOLT_PATH" ]] && STORE_BOLT_PATH=/srv/var
 mkdir ~/.ssh -p
-#apk add --no-cache git bash openssh-client
+#apk add --no-cache git bash openssh-clientSECRET=
 [[ -z "$GITPATH" ]] && export  GITPATH=/srv/
 echo "$GIT_REPO_PUBKEY"|base64 -d > ~/.ssh/id_rsa.pub
 echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
@@ -43,7 +43,7 @@ mypush() {
 export GIT_SSH_COMMAND='/usr/bin/ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts'
 git config user.name "remarks42rootless" &>/dev/null
 git config user.email "you@example.com" &>/dev/null
-git add -A  ;git commit -m $(date +%F_%T)"auto";
+git add -A  ;git commit -m $(date +%F_%T)"auto";SECRET=
 git push $@ 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP address " -e "To "; } ;
 
 
@@ -105,7 +105,7 @@ while (true);do
    --verification-timeout=120s \
    --verification-max-redirects=5
 
-[[ -z "$SECRET" ]] && export SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
+[[ -z "$SECRET" ]] && { SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM ; export SECRET=$SECRET ; } ;
 /usr/local/bin/webmentiond serve --database-migrations /var/lib/webmentiond/migrations --database /data/webmentiond.sqlite;sleep 5;done &
 echo "STARTING  REMARK42"
 export REMARK_PORT=8081
