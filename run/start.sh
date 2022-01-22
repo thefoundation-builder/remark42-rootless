@@ -56,7 +56,7 @@ find /tmp/gitstorage
 ( echo "init:copyDirs  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type d |grep -v ".git"|while read mydir ;do mkdir -p  ${GITPATH}/"$mydir" ;done)
 ( echo "init:copyFile  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type f |grep -v ".git"|while read myfile;do diff --brief "$myfile" ${GITPATH}/"$myfile"  || cp -v  "$myfile" ${GITPATH}/"$myfile" ;done)
 
-[[ -z "$GITPATH" ]] || ( cd "${GITPATH}" && git pull )
+#[[ -z "$GITPATH" ]] || ( cd "${GITPATH}" && git pull )
 [[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH" 
 
 mkdir -p ${STORE_BOLT_PATH}
@@ -68,6 +68,7 @@ test -e /srv/var || mkdir -p /srv/var
                                      find -type d -mindepth 1|grep -v ".git"|while read mydir ;do test -e /tmp/gitstorage/"$mydir"  || mkdir -p test /tmp/gitstorage/"$mydir" ;done
                                      find -type f -mindepth 1|grep -v ".git"|grep -v "^./remark42$" |while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done 
                                      cd /tmp/gitstorage/ ;
+                                     git add -A
                                      mypush
                                      )
                             
