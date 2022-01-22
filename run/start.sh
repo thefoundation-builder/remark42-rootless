@@ -6,7 +6,7 @@
 echo "INIT"
 
 
-[[ -z "$REMARK_URL" ]] && export REMARK_URL=127.0.0.1:8080
+[[ -z "$REMARK_URL" ]] && export REMARK_URL=http://127.0.0.1:8080
 [[ -z "$SLEEPINTER" ]]        &&  SLEEPINTER=90
 [[ -z "$GIT_REPO_KEY" ]]      &&  echo "NO KEY ;CANNOT RUN"
 [[ -z "$GIT_REPO_KEY" ]]      &&  exit 1
