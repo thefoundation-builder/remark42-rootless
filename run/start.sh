@@ -80,7 +80,7 @@ test -e /srv/var || mkdir -p /srv/var
                                      ) |sed 's/$/|/g' |tr -d '\n'
                             
                             [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )    ) ; 
-                          inotifywatch $(find $GITPATH)  ; done
+                          inotifywait $(find $GITPATH)  ; done
  ) &
 
 echo "PREP"
