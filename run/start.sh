@@ -95,7 +95,7 @@ URL=$REMARK_URL
 echo "FORKING WEBMENTIOND"
 while (true);do 
 ##att multiline ahead
-  MAIL_NO_TLS=true MAIL_FROM=webmention-ui.local MAIL_PORT=1025 EMAIL_HOST=127.0.0.1 MAIL_HOST=127.0.0.1   SERVER_AUTH_JWT_SECRET=$JWTSECRET /usr/local/bin/webmentiond serve \
+  MAIL_NO_TLS=true MAIL_FROM=mails@webmention-ui.local MAIL_PORT=1025 EMAIL_HOST=127.0.0.1 MAIL_HOST=127.0.0.1   SERVER_AUTH_JWT_SECRET=$JWTSECRET /usr/local/bin/webmentiond serve \
    --public-url=$URL/webmentions    \
    --allowed-target-domains "mydomain.lan" \
    --auth-admin-emails "admina@abc.de"     \
