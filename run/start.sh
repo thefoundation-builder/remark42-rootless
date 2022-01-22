@@ -17,7 +17,7 @@ echo "INIT"
 
 [[ -z "$BACKUP_PATH" ]] &&    BACKUP_PATH=/tmp/backup
 [[ -z "$BACKUP_PATH" ]] &&    BACKUP_PATH=/tmp/backup
-[[ -z "STORE_BOLT_PATH" ]] && STORE_BOLT_PATH=/srv/var
+[[ -z "STORE_BOLT_PATH" ]] && STORE_BOLT_PATH=/srv/varmodify
 [[ -z "$ALLOWED_DOMAINS" ]] && export ALLOWED_DOMAINS=mydomain.lan
 mkdir ~/.ssh -p
 #apk add --no-cache git bash openssh-clientSECRET=
@@ -69,6 +69,8 @@ test -e /srv/var || mkdir -p /srv/var
                              
                              [[ -z "$GITPATH" ]] || ( 
                                cd /tmp/gitstorage
+                               git config user.name "remarks42rootless" &>/dev/null
+                               git config user.email "you@example.com" &>/dev/null
                                git pull ;
                                      cd ${GITPATH} ; pwd ;
                                      find -type d -mindepth 1|grep -v ".git"|while read mydir ;do test -e /tmp/gitstorage/"$mydir"  || mkdir -p test /tmp/gitstorage/"$mydir" ;done
