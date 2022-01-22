@@ -28,7 +28,7 @@ mkdir ~/.ssh -p
 [[ -z "$GITPATH" ]] && export  GITPATH=/srv/
 echo "$GIT_REPO_PUBKEY"|base64 -d > ~/.ssh/id_rsa.pub
 echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
-chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsaMAIL_USER
+chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
 ## keyscan
 oneline() { tr -d '\n' ; } ;
 [[ -z "$GITPATH" ]] && GITPATH=/srv/
