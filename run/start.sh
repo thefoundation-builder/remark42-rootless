@@ -73,8 +73,13 @@ test -e /srv/var || mkdir -p /srv/var
  ) &  
 
 echo "PREP"
+
+[[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PAS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
+test -e /srv/htpass.mail && rm /srv/htpass.mail
+echo $MENTION_ADMINPASS |htpasswd -cBi  /srv/htpass.mail mention_admin
+
 #cat /init.orig.sh
-printenv
+#printenv
 echo "FORKING nginx"
 while (true);do nginx -g "daemon off;" ;sleep 5;done &
 
