@@ -43,7 +43,7 @@ mypush() {
 export GIT_SSH_COMMAND='/usr/bin/ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts'
 git config user.name "remarks42rootless" &>/dev/null
 git config user.email "you@example.com" &>/dev/null
-git add -A  ;git commit -m $(date +%F_%T)"auto";SECRET=
+git add -A  ;git commit -m $(date +%F_%T)"auto";SECRET=""
 git push $@ 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP address " -e "To "; } ;
 
 
@@ -103,7 +103,7 @@ while (true);do
    --database /srv/webmentiond.sqlite  \
    --verification-timeout=120s \
    --verification-max-redirects=5
-
+[[ -z "$SECRET" ]] && echo no secret set
 [[ -z "$SECRET" ]] && { SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM ; export SECRET=$SECRET ; } ;
 /usr/local/bin/webmentiond serve --database-migrations /var/lib/webmentiond/migrations --database /data/webmentiond.sqlite;sleep 5;done &
 echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
