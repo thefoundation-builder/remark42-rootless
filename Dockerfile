@@ -1,4 +1,3 @@
-FROM umputun/remark42:latest
 
 
 
@@ -7,6 +6,8 @@ FROM umputun/remark42:latest
 #FROM alpine:3.14
 FROM zerok/webmentiond as webmention
 RUN echo heyhey
+
+FROM umputun/remark42:latest
 
 #RUN apk add --no-cache sqlite-dev golang
 #VOLUME ["/data"]
