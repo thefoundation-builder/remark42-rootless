@@ -8,7 +8,7 @@ FROM zerok/webmentiond as webmention
 RUN echo heyhey
 
 FROM umputun/remark42:latest
-
+USER 0
 #RUN apk add --no-cache sqlite-dev golang
 #VOLUME ["/data"]
 #RUN adduser -u 1500 -h /data -H -D webmentiond && \
