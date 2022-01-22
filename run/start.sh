@@ -104,7 +104,7 @@ while (true);do
 ##[[ -z "$SECRET" ]] && SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM 
 ##export SECRET=${SECRET}
 chown -R app /srv
-
+pwd
 echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
 export REMARK_PORT=8081
 bash /init.orig.sh /srv/remark42 server
