@@ -82,7 +82,7 @@ test -e /srv/var || mkdir -p /srv/var
                                      ) |sed 's/$/|/g' |tr -d '\n'
                             
                             [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )    ) ; 
-                            cd $GITPATH; sleep 30;inotifawatch -e delete -e create -e write -e move -e move_self -e modify -e attrib $(find $GITPATH)  ; done
+                            cd $GITPATH; sleep 30;inotifawatch -e delete -e create -e move -e move_self -e modify -e attrib $(find $GITPATH)  ; done
  ) &
 
 echo "PREP"
