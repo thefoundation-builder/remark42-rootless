@@ -9,11 +9,23 @@ echo "INIT"
 [[ -z "$REMARK_URL" ]]        && export REMARK_URL=http://127.0.0.1:8080
 [[ -z "$SLEEPINTER" ]]        &&  SLEEPINTER=90
 
+[[ -z "$NOTIFY_ADMINS=emai" ]] && NOTIFY_ADMINS=email
+[[ -z "$ADMIN_SHARED_EMAIL" ]] && ADMIN_SHARED_EMAIL=admin@example.com
 
-[[ -z "$GIT_REPO_SYNC" ]]     &&  echo "NO REPO;CANNOT RUN"
-[[ -z "$GIT_REPO_SYNC" ]]     &&  exit 1
-[[ -z "$GIT_REPO_KEY" ]]      &&  echo "NO KEY ;CANNOT RUN"
-[[ -z "$GIT_REPO_KEY" ]]      &&  exit 1
+
+[[ -z "$ADMIN_MAIL" ]] && ADMIN_MAIL=admin@site.local
+
+[[ -z "$SMTP_HOST" ]]          && SMTP_HOST=127.0.0.1
+[[ -z "$SMTP_PORT" ]]          && SMTP_PORT=1025
+[[ -z "$SMTP_TLS" ]]           && SMTP_TLS=false
+[[ -z "$SMTP_USERNAME" ]]      && SMTP_USERNAME=postmaster@local.lan
+[[ -z "$SMTP_PASSWORD" ]]      && SMTP_PASSWORD=secretpassword
+[[ -z "$AUTH_EMAIL_FROM" ]]    && AUTH_EMAIL_FROM=notify@local.lan
+[[ -z "$NOTIFY_EMAIL_FROM" ]]  && NOTIFY_EMAIL_FROM=notify@local.lan
+[[ -z "$GIT_REPO_SYNC" ]]      &&  echo "NO REPO;CANNOT RUN"
+[[ -z "$GIT_REPO_SYNC" ]]      &&  exit 1
+[[ -z "$GIT_REPO_KEY" ]]       &&  echo "NO KEY ;CANNOT RUN"
+[[ -z "$GIT_REPO_KEY" ]]       &&  exit 1
 
 [[ -z "$GIT_REPO_PUBKEY" ]]   &&  echo "NO PuBKEY ;CANNOT RUN"
 [[ -z "$GIT_REPO_PUBKEY" ]]   &&  exit 1
@@ -23,6 +35,8 @@ echo "INIT"
 [[ -z "STORE_BOLT_PATH" ]]    && STORE_BOLT_PATH=/srv/varmodify
 
 [[ -z "$ALLOWED_DOMAINS" ]]   && export ALLOWED_DOMAINS=$(echo "$REMARK_URL" |cut -d"/" -f3)
+MAIL_NO_TLS=false
+[[ "$SMTP_TLS" = "false" ]] && MAIL_NO_TLS=true
 
 mkdir ~/.ssh -p
 #apk add --no-cache git bash openssh-clientSECRET=
@@ -94,7 +108,7 @@ test -e /srv/var || mkdir -p /srv/var
 echo "PREP"
 
 [[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PASS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
-[[ -z "$MENTION_ADMIN" ]] && MENTION_ADMIN=mention_admin
+[[ -z "$MENTION_ADMIN" ]] && MENTION_ADMIN=site_admin
 test -e /${GITPATH}/htpass.mail && rm /${GITPATH}/htpass.mail
 echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail "$MENTION_ADMIN"
 
@@ -118,10 +132,10 @@ URL=$REMARK_URL
 [[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 echo "FORKING WEBMENTIOND"
 export MAIL_NO_TLS=true
-echo "RUN: "'MAIL_NO_TLS=true MAIL_PASSWORD=doesnotmatter MAIL_USER=mails@webmention-ui.local MAIL_FROM=mails@webmention-ui.local MAIL_PORT=1025 EMAIL_HOST=127.0.0.1 MAIL_HOST=127.0.0.1   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "admina@webmention-ui.local"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 '
+echo "RUN: "'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 '
 while (true);do 
 ##att multiline ahead
-  su -s /bin/bash -c 'MAIL_NO_TLS=true MAIL_PASSWORD=doesnotmatter MAIL_USER=mails@webmention-ui.local  MAIL_FROM=mails@webmention-ui.local MAIL_PORT=1025 EMAIL_HOST=127.0.0.1 MAIL_HOST=127.0.0.1   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "admina@webmention-ui.local"        --send-notifications --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 ' app;sleep 5;done &
+  su -s /bin/bash -c 'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --send-notifications --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 ' app;sleep 5;done &
 ##[[ -z "$SECRET" ]] && echo no secret set
 ##[[ -z "$SECRET" ]] && SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM 
 ##export SECRET=${SECRET}
