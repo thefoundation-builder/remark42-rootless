@@ -18,8 +18,8 @@ echo "INIT"
 [[ -z "$GIT_REPO_PUBKEY" ]]   &&  echo "NO PuBKEY ;CANNOT RUN"
 [[ -z "$GIT_REPO_PUBKEY" ]]   &&  exit 1
 
-[[ -z "$BACKUP_PATH" ]]       &&    BACKUP_PATH=/tmp/backup
-[[ -z "$BACKUP_PATH" ]]       &&    BACKUP_PATH=/tmp/backup
+[[ -z "$BACKUP_PATH" ]]       &&  BACKUP_PATH=/tmp/backup
+[[ -z "$BACKUP_PATH" ]]       &&  BACKUP_PATH=/tmp/backup
 [[ -z "STORE_BOLT_PATH" ]]    && STORE_BOLT_PATH=/srv/varmodify
 
 [[ -z "$ALLOWED_DOMAINS" ]]   && export ALLOWED_DOMAINS=$(echo "$REMARK_URL" |cut -d"/" -f3)
@@ -94,8 +94,9 @@ test -e /srv/var || mkdir -p /srv/var
 echo "PREP"
 
 [[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PASS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
+[[ -z "$MENTION_ADMIN" ]] && MENTION_ADMIN=mention_admin
 test -e /${GITPATH}/htpass.mail && rm /${GITPATH}/htpass.mail
-echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail mention_admin
+echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail "$MENTION_ADMIN"
 
 #cat /init.orig.sh
 #printenv
@@ -109,7 +110,10 @@ mkdir ${GITPATH}/mailhog_config
 
 while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir MH_STORAGE=maildir /usr/local/bin/MailHog mailhog" ;sleep 5;done &
 
+
 echo "PREP WEBMENTIOND"
+test -e /${GITPATH}/htpass.webmentions && rm /${GITPATH}/htpass.webmentions
+ln -s /${GITPATH}/htpass.webmentions
 URL=$REMARK_URL
 [[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 echo "FORKING WEBMENTIOND"
