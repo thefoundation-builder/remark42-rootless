@@ -113,7 +113,7 @@ while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir M
 
 echo "PREP WEBMENTIOND"
 test -e /${GITPATH}/htpass.webmentions && rm /${GITPATH}/htpass.webmentions
-ln -s /${GITPATH}/htpass.webmentions
+ln -s /${GITPATH}/htpass.mail /${GITPATH}/htpass.webmentions
 URL=$REMARK_URL
 [[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 echo "FORKING WEBMENTIOND"
