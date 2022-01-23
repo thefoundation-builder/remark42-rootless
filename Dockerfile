@@ -13,11 +13,16 @@ RUN echo heyhey
 
 ## build from remark42
 FROM umputun/remark42:latest
+
 USER 0
-RUN apk add --no-cache sqlite-dev # golang
+#RUN apk add --no-cache git bash jq 
+#RUN apk add --no-cache curl findutils  psmisc psutils
+#RUN apk add --no-cache openssh-client
+RUN    mkdir -p /var/lib/webmentiond/frontend && apk add sqlite-dev curl findutils git bash jq  openssh-client inotify-tools nginx apache2-utils # golang 
+
 #VOLUME ["/data"]
 #RUN adduser -u 1500 -h /data -H -D webmentiond && \
-RUN    mkdir -p /var/lib/webmentiond/frontend
+
 COPY --from=webmention /var/lib/webmentiond/migrations /var/lib/webmentiond/migrations
 COPY --from=webmention /usr/local/bin/webmentiond /usr/local/bin/webmentiond 
 COPY --from=webmention /var/lib/webmentiond/frontend/dist /var/lib/webmentiond/frontend/dist
@@ -34,18 +39,14 @@ COPY --from=mailhog /usr/local/bin/MailHog /usr/local/bin/MailHog
 ### Expose the SMTP and HTTP ports:
 ##EXPOSE 1025 8025
 
-COPY default.conf /etc/nginx/http.d/
-#RUN apk add --no-cache git bash jq 
-#RUN apk add --no-cache curl findutils  psmisc psutils
-#RUN apk add --no-cache openssh-client
-RUN apk add curl findutils git bash jq  openssh-client inotify-tools nginx apache2-utils
+
 RUN mv /init.sh /init.orig.sh
 #RUN ln -sf /run/start.sh /init.sh
 #RUN ln -sf /start/init.sh /srv/init.sh 
 copy run/start.sh /init.sh
 #copy run/start.sh /srv/init.sh
 VOLUME ["/srv"]
-RUN /usr/local/bin/webmentiond  --help || true 
-RUN /srv/remark42 --help 2>&1 |grep avatar
+COPY default.conf /etc/nginx/http.d/
+RUN /usr/local/bin/webmentiond  --help || true && /srv/remark42 --help 2>&1 |grep avatar
 RUN chmod +x /init.sh
 EXPOSE 8080
