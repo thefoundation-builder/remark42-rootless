@@ -10,7 +10,7 @@ echo "INIT"
 [[ -z "$SLEEPINTER" ]]        &&  SLEEPINTER=90
 
 [[ -z "$NOTIFY_ADMINS=emai" ]] && NOTIFY_ADMINS=email
-[[ -z "$ADMIN_SHARED_EMAIL" ]] && ADMIN_SHARED_EMAIL=admin@example.com
+[[ -z "$ADMIN_SHARED_EMAIL" ]] && ADMIN_SHARED_EMAIL=publicvisible@site.local
 
 
 [[ -z "$ADMIN_MAIL" ]] && ADMIN_MAIL=admin@site.local
