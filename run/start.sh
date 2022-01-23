@@ -101,10 +101,14 @@ echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail mention_admin
 #printenv
 echo "FORKING nginx"
 while (true);do nginx -g "daemon off;" ;sleep 5;done &
-chown -R app /srv
+chown -R app /${GITPATH}
 
 echo "FORKING MAIL UI"
-while (true);do su -s /bin/bash -c /usr/local/bin/MailHog mailhog ;sleep 5;done &
+mkdir ${GITPATH}/mailhog_maildir
+mkdir ${GITPATH}/mailhog_config
+
+while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir MH_STORAGE=mailhog /usr/local/bin/MailHog mailhog" ;sleep 5;done &
+
 echo "PREP WEBMENTIOND"
 URL=$REMARK_URL
 [[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
