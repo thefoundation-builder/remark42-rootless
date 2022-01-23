@@ -107,7 +107,7 @@ echo "FORKING MAIL UI"
 mkdir ${GITPATH}/mailhog_maildir
 mkdir ${GITPATH}/mailhog_config
 
-while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir MH_STORAGE=mailhog /usr/local/bin/MailHog mailhog" ;sleep 5;done &
+while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir MH_STORAGE=maildir /usr/local/bin/MailHog mailhog" ;sleep 5;done &
 
 echo "PREP WEBMENTIOND"
 URL=$REMARK_URL
