@@ -15,7 +15,7 @@
 
 oneline() { tr -d '\n' ; } ;
 [[ -z "$GITPATH" ]] && export   GITPATH=/srv/
-test -e $GITPATH || {echo mkdir $GITPATH;mkdir  -p "$GITPATH" ; } ;
+test -e $GITPATH || { echo mkdir $GITPATH;mkdir  -p "$GITPATH" ; } ;
 
 
 myclone() {
