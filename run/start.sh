@@ -120,7 +120,7 @@ while (true);do nginx -g "daemon off;" ;sleep 5;done &
 chown -R app /${GITPATH}
 sed -i 's~/var/log/php7/error.log~/dev/stderr~g' $(find  /etc/php* -type f );  
 echo "FORKING FPM"
-while (true);do su -s /bin/bash app -c "php-fpm7 --nodaemonize --force-stderr -d 'error_log = /dev/stderr;'";sleep 3;done 
+while (true);do su -s /bin/bash app -c "php-fpm7 --nodaemonize --force-stderr -d 'error_log = /dev/stderr;'";sleep 3;done &
 
 
 echo "FORKING MAIL UI"
