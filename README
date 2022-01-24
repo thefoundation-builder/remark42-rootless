@@ -1,0 +1,15 @@
+remark42 with webmentiond rootless with Pingback and MailHog
+
+
+- sends auth mail via mailhog
+- will only send mail to mailhog, you need to release it from there for external comments
+
+## endpoints
+
+| Type | protected | URL |
+|---|---|---|
+| Mail | Y |  /mail |
+| Webmentions (RECEIVE) | Y |  /webmentions/receive |
+| PingBack (RECEIVE) | Y |  /webmentions/pingback |
+| Ping | N |  /ping |
+
