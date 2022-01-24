@@ -119,7 +119,7 @@ echo "FORKING nginx"
 while (true);do nginx -g "daemon off;" ;sleep 5;done &
 chown -R app /${GITPATH}
 sed -i 's~/var/log/php7/.\+\.log~/dev/stderr~g' $(find  /etc/php* -type f );  
-mkdir -p /var/log/php7/error.log
+mkdir -p /var/log/php7
 ln -sf /dev/stderr /var/log/php7/access.log
 ln -sf /dev/stderr /var/log/php7/arror.log
 
