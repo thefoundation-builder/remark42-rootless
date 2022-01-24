@@ -170,7 +170,7 @@ chown -R app /${GITPATH}
                                      ) |sed 's/$/|/g' |tr -d '\n'
                             
                             [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )    ) ; 
-                            cd $GITPATH; sleep 30;inotifywatch -e delete -e create -e move -e move_self -e modify -e attrib $(find $GITPATH)  ; done
+                            cd $GITPATH; sleep 30;inotifywait -e delete -e create -e move -e move_self -e modify -e attrib $(find $GITPATH)  ; done
  ) &
 
 
