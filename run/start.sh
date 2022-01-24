@@ -119,6 +119,10 @@ echo "FORKING nginx"
 while (true);do nginx -g "daemon off;" ;sleep 5;done &
 chown -R app /${GITPATH}
 sed -i 's~/var/log/php7/.\+\.log~/dev/stderr~g' $(find  /etc/php* -type f );  
+mkdir -p /var/log/php7/error.log
+ln -sf /dev/stderr /var/log/php7/access.log
+ln -sf /dev/stderr /var/log/php7/arror.log
+
 echo "FORKING FPM"
 while (true);do su -s /bin/bash app -c "php-fpm7 --nodaemonize --force-stderr -d 'error_log = /dev/stderr;'";sleep 3;done &
 
