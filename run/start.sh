@@ -45,10 +45,10 @@ chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
 ssh-keyscan  gitlab.com >>  ~/.ssh/known_hosts 2>&1 | oneline
 ssh-keyscan  github.com >>  ~/.ssh/known_hosts  2>&1 | oneline
 myclone ${GIT_REPO_SYNC} /tmp/gitstorage 
-[[ -z "$GITPATH" ]] || mkdir -p "$GITPATH" &
+[[ -z "${GITPATH}" ]] || mkdir -p "${GITPATH}" &
 echo "CLONED";
 
-find /tmp/gitstorage |grep -v /tmp/gitstorage/.git/ |sed 's/$/|/g' |tr -d '\n'
+#find /tmp/gitstorage |grep -v /tmp/gitstorage/.git/ |sed 's/$/|/g' |tr -d '\n' &
 
 
 ( echo "init:copyDirs  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type d |grep -v ".git"|grep -v ^$|while read mydir ;do 
@@ -83,7 +83,7 @@ chown -R app /${GITPATH}
 [[ -z "$BACKUP_PATH" ]]        && export BACKUP_PATH=/tmp/backup
 [[ -z "STORE_BOLT_PATH" ]]     && export STORE_BOLT_PATH=/srv/varmodify
 
-[[ -z "$ALLOWED_DOMAINS" ]]    && export ALLOWED_DOMAINS=$(echo "$REMARK_URL" |cut -d"/" -f3)
+[[ -z "$ALLOWED_DOMAINS" ]]    && export ALLOWED_DOMAINS=$(echo "$REMARK_URL" |cut -d"/" -f3|cut -d: -f1)
 
 ## inverse logic
 export MAIL_NO_TLS=false
