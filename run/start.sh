@@ -176,8 +176,8 @@ chown -R app /${GITPATH}
 
  ## local quick tests
 (sleep 30;
-echo "testing interfaces" ;curl -kLv 127.0.0.1:8081/web/embed.js 2>&1|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;echo "###";curl -kLv 127.0.0.1:8023/ui/ 2>&1|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
-echo "testing interfaces (nginx)" ;curl -kLv 127.0.0.1:8080/web/embed.js 2>&1|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;echo "###";curl -kLv 127.0.0.1:8080/webmentions/ui/ 2>&1|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
+echo "testing interfaces" ;curl -kLv 127.0.0.1:8081/web/embed.js 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;echo "###";curl -kLv 127.0.0.1:8023/ui/ 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
+echo "testing interfaces (nginx)" ;curl -kLv 127.0.0.1:8080/web/embed.js 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;echo "###";curl -kLv 127.0.0.1:8080/webmentions/ui/ 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
  ) &
 cd /srv
 echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
