@@ -119,6 +119,10 @@ echo "FORKING nginx"
 while (true);do nginx -g "daemon off;" ;sleep 5;done &
 chown -R app /${GITPATH}
 
+echo "FORKING FPM"
+while (true);do su -s /bin/bash app -c "php-fpm7 --nodaemonize --force-stderr -d 'error_log = /dev/stderr;'";sleep 3;done 
+
+
 echo "FORKING MAIL UI"
 mkdir ${GITPATH}/mailhog_maildir
 mkdir ${GITPATH}/mailhog_config
