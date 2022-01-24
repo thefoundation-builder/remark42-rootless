@@ -107,7 +107,7 @@ test -e /srv/var || mkdir -p /srv/var
  
 echo "PREP"
 echo ENV 
-env
+env|grep -v -e _KEY -e ADMINPASS
 [[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PASS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
 [[ -z "$MENTION_ADMIN" ]] && MENTION_ADMIN=site_admin
 test -e /${GITPATH}/htpass.mail && rm /${GITPATH}/htpass.mail
@@ -118,22 +118,20 @@ echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail "$MENTION_ADMIN"
 echo "FORKING nginx"
 while (true);do nginx -g "daemon off;" ;sleep 5;done &
 chown -R app /${GITPATH}
-sed -i 's~/var/log/php7/.\+\.log~/dev/stderr~g' $(find  /etc/php* -type f );  
-mkdir -p /var/log/php7
-ln -sf /dev/stderr /var/log/php7/access.log
-ln -sf /dev/stderr /var/log/php7/arror.log
-chown -R app:app /var/log/php7
 
 
-echo "FORKING FPM"
-while (true);do su -s /bin/bash app -c "php-fpm7 --nodaemonize --force-stderr -d 'error_log = /dev/stderr;'";sleep 3;done &
+( sed -i 's~/var/log/php7/.\+\.log~/dev/stderr~g' $(find  /etc/php* -type f ) &  
+  mkdir -p /var/log/php7 ; 
+  ln -sf /dev/stderr /var/log/php7/access.log & ln -sf /dev/stderr /var/log/php7/arror.log ; chown -R app:app /var/log/php7 &
+  wait  ;echo "FORKING FPM"; while (true);do su -s /bin/bash app -c "php-fpm7 --nodaemonize --force-stderr -d 'error_log = /dev/stderr;'";sleep 3;done ) &
 
 
-echo "FORKING MAIL UI"
-mkdir ${GITPATH}/mailhog_maildir
-mkdir ${GITPATH}/mailhog_config
-
-while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir MH_STORAGE=maildir /usr/local/bin/MailHog mailhog" ;sleep 5;done &
+(
+test -e ${GITPATH}/mailhog_maildir || mkdir ${GITPATH}/mailhog_maildir   &
+test -e ${GITPATH}/mailhog_config  || mkdir ${GITPATH}/mailhog_config    &
+wait
+ echo "FORKING MAIL UI"
+while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir MH_STORAGE=maildir /usr/local/bin/MailHog mailhog" 2>&1 |grep -e API -e "To:" -e "Subject:" -e " Found " -e Message-Id  ;sleep 5;done &
 
 
 echo "PREP WEBMENTIOND"
