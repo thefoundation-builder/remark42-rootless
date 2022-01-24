@@ -158,7 +158,8 @@ chown -R app /${GITPATH}
                                cd /tmp/gitstorage
                                git config user.name "remarks42rootless" &>/dev/null
                                git config user.email "you@example.com" &>/dev/null
-                               git pull  --ff-only;
+                               git status
+                              # git pull  --ff-only;
                                      cd ${GITPATH} ; pwd ;
                                      find -type d -mindepth 1|grep -v ".git"|while read mydir ;do test -e /tmp/gitstorage/"$mydir"  || mkdir -p test /tmp/gitstorage/"$mydir" ;done
                                      find -type f -mindepth 1 |grep -v -e  "^/.git" -e "^./remark42$" -e "^./web/" |while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done 
