@@ -14,8 +14,8 @@
 [[ -z "$GIT_REPO_PUBKEY" ]]    &&  exit 1
 
 oneline() { tr -d '\n' ; } ;
-[[ -z "$GITPATH" ]] && GITPATH=/srv/
-test -e $GITPATH || mkdir  -p "$GITPATH"
+[[ -z "$GITPATH" ]] && export   GITPATH=/srv/
+test -e $GITPATH || {echo mkdir $GITPATH;mkdir  -p "$GITPATH" ; } ;
 
 
 myclone() {
