@@ -18,7 +18,7 @@ USER 0
 #RUN apk add --no-cache git bash jq 
 #RUN apk add --no-cache curl findutils  psmisc psutils
 #RUN apk add --no-cache openssh-client
-RUN    mkdir -p /var/www/pingback /var/lib/webmentiond/frontend && apk add php-fpm php-xmlrpc sqlite-dev curl findutils git bash jq  openssh-client inotify-tools nginx apache2-utils # golang 
+RUN    mkdir -p /var/www/webmentions /var/lib/webmentiond/frontend && apk add php-fpm php-xmlrpc sqlite-dev curl findutils git bash jq  openssh-client inotify-tools nginx apache2-utils # golang 
 
 #VOLUME ["/data"]
 #RUN adduser -u 1500 -h /data -H -D webmentiond && \
@@ -35,7 +35,7 @@ WORKDIR /var/lib/webmentiond
 
 RUN adduser -D -u 1000 mailhog
 COPY --from=mailhog /usr/local/bin/MailHog /usr/local/bin/MailHog
-COPY pingback.php /var/www/pingback/pingback.php
+COPY pingback.php /var/www/webmentions/pingback.php
 ### Expose the SMTP and HTTP ports:
 ##EXPOSE 1025 8025
 RUN sed -i 's~/var/log/php7/error.log~/dev/stderr~g' $(find  /etc/php* -type f );  
