@@ -27,16 +27,18 @@ echo "INIT"
 [[ -z "$GIT_REPO_KEY" ]]       &&  echo "NO KEY ;CANNOT RUN"
 [[ -z "$GIT_REPO_KEY" ]]       &&  exit 1
 
-[[ -z "$GIT_REPO_PUBKEY" ]]   &&  echo "NO PuBKEY ;CANNOT RUN"
-[[ -z "$GIT_REPO_PUBKEY" ]]   &&  exit 1
+[[ -z "$GIT_REPO_PUBKEY" ]]    &&  echo "NO PuBKEY ;CANNOT RUN"
+[[ -z "$GIT_REPO_PUBKEY" ]]    &&  exit 1
 
-[[ -z "$BACKUP_PATH" ]]       &&  BACKUP_PATH=/tmp/backup
-[[ -z "$BACKUP_PATH" ]]       &&  BACKUP_PATH=/tmp/backup
-[[ -z "STORE_BOLT_PATH" ]]    && STORE_BOLT_PATH=/srv/varmodify
+[[ -z "$BACKUP_PATH" ]]        &&  BACKUP_PATH=/tmp/backup
+[[ -z "$BACKUP_PATH" ]]        &&  BACKUP_PATH=/tmp/backup
+[[ -z "STORE_BOLT_PATH" ]]     && STORE_BOLT_PATH=/srv/varmodify
 
-[[ -z "$ALLOWED_DOMAINS" ]]   && export ALLOWED_DOMAINS=$(echo "$REMARK_URL" |cut -d"/" -f3)
+[[ -z "$ALLOWED_DOMAINS" ]]    && export ALLOWED_DOMAINS=$(echo "$REMARK_URL" |cut -d"/" -f3)
+
+## inverse logic
 MAIL_NO_TLS=false
-[[ "$SMTP_TLS" = "false" ]] && MAIL_NO_TLS=true
+[[ "$SMTP_TLS" = "false" ]]    && MAIL_NO_TLS=true
 
 mkdir ~/.ssh -p
 #apk add --no-cache git bash openssh-clientSECRET=
@@ -71,12 +73,16 @@ git push $@ 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP 
 #myclone ${GIT_REPO_SYNC}  ${GITPATH} || mkdir -p  ${GITPATH}
 #DO NOT RUN WITHOUT STORAGE FROM GIT 
 myclone ${GIT_REPO_SYNC} /tmp/gitstorage 
-echo "CLONED"
+[[ -z "$GITPATH" ]] || mkdir -p "$GITPATH" &
+echo "CLONED";
+
 find /tmp/gitstorage |grep -v /tmp/gitstorage/.git/ |sed 's/$/|/g' |tr -d '\n'
 
-[[ -z "$GITPATH" ]] || mkdir -p "$GITPATH"
-( echo "init:copyDirs  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type d |grep -v ".git"|while read mydir ;do mkdir -p  ${GITPATH}/"$mydir" ;done 2>&1 )  |sed 's/$/|/g' |tr -d '\n'
-( echo "init:copyFile  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type f |grep -v ".git"|while read myfile;do diff --brief "$myfile" ${GITPATH}/"$myfile" 2>&1 || cp -v  "$myfile" ${GITPATH}/"$myfile" ;done 2>&1 )  |sed 's/$/|/g' |tr -d '\n'
+
+( echo "init:copyDirs  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type d |grep -v ".git"|grep -v ^$|while read mydir ;do 
+    mkdir -p  ${GITPATH}/"$mydir" ;done 2>&1 )  |sed 's/$/|/g' |tr -d '\n'
+( echo "init:copyFile  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type f |grep -v ".git"|grep -v ^$|while read myfile;do 
+    diff --brief "$myfile" ${GITPATH}/"$myfile" 2>&1 || cp -v  "$myfile" ${GITPATH}/"$myfile" ;done 2>&1 )  |sed 's/diff: can.t stat.\+/diff: cannott stat .. /g;s/$/|/g' |tr -d '\n'
 
 chown -R app /${GITPATH}
 
@@ -104,20 +110,17 @@ test -e /srv/var || mkdir -p /srv/var
                             [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )    ) ; 
                             cd $GITPATH; sleep 30;inotifywatch -e delete -e create -e move -e move_self -e modify -e attrib $(find $GITPATH)  ; done
  ) &
- 
+
+chown -R app /srv
+chmod ug+w /srv
+
 echo "PREP"
-echo ENV 
-env|grep -v -e _KEY -e ADMINPASS
+(sleep 20;pwd;echo ENV ;env|grep -v -e _KEY -e ADMINPASS ) &
 [[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PASS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
 [[ -z "$MENTION_ADMIN" ]] && MENTION_ADMIN=site_admin
 test -e /${GITPATH}/htpass.mail && rm /${GITPATH}/htpass.mail
 echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail "$MENTION_ADMIN"
 
-#cat /init.orig.sh
-#printenv
-echo "FORKING nginx"
-while (true);do nginx -g "daemon off;" ;sleep 5;done &
-chown -R app /${GITPATH}
 
 
 ( sed -i 's~/var/log/php7/.\+\.log~/dev/stderr~g' $(find  /etc/php* -type f ) &  
@@ -131,10 +134,18 @@ test -e ${GITPATH}/mailhog_maildir || mkdir ${GITPATH}/mailhog_maildir   &
 test -e ${GITPATH}/mailhog_config  || mkdir ${GITPATH}/mailhog_config    &
 wait
  echo "FORKING MAIL UI"
-while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir MH_STORAGE=maildir /usr/local/bin/MailHog mailhog" 2>&1 |grep -e API -e "To:" -e "Subject:" -e " Found " -e Message-Id  ;sleep 5;done &
+while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir MH_STORAGE=maildir /usr/local/bin/MailHog mailhog" 2>&1 |grep -e API -e "To:" -e "Subject:" -e " Found " -e Message-Id  ;sleep 5;done ) &
+
+#cat /init.orig.sh
+#printenv
+echo "FORKING nginx"
+while (true);do nginx -g "daemon off;" ;sleep 5;done &
+chown -R app /${GITPATH}
 
 
-echo "PREP WEBMENTIOND"
+
+
+( echo "PREP WEBMENTIOND"
 test -e /${GITPATH}/htpass.webmentions && rm /${GITPATH}/htpass.webmentions
 ln -s /${GITPATH}/htpass.mail /${GITPATH}/htpass.webmentions
 URL=$REMARK_URL
@@ -148,12 +159,11 @@ while (true);do
 ##[[ -z "$SECRET" ]] && echo no secret set
 ##[[ -z "$SECRET" ]] && SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM 
 ##export SECRET=${SECRET}
-chown -R app /srv
-chmod ug+w /srv
-pwd
+) &
+
 (sleep 30;
-echo "testing interfaces" ;curl -kLv 127.0.0.1:8081/web/embed.js > /dev/null;echo "###";curl -kLv 127.0.0.1:8023/ui/ > /dev/null;
-echo "testing interfaces (nginx)" ;curl -kLv 127.0.0.1:8080/web/embed.js > /dev/null;echo "###";curl -kLv 127.0.0.1:8080/webmentions/ui/ > /dev/null;
+echo "testing interfaces" ;curl -kLv 127.0.0.1:8081/web/embed.js 2>&1|grep -e HTTP -e GET --e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;echo "###";curl -kLv 127.0.0.1:8023/ui/ 2>&1|grep -e HTTP -e GET --e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
+echo "testing interfaces (nginx)" ;curl -kLv 127.0.0.1:8080/web/embed.js 2>&1|grep -e HTTP -e GET --e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;echo "###";curl -kLv 127.0.0.1:8080/webmentions/ui/ 2>&1|grep -e HTTP -e GET --e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
  ) &
 cd /srv
 echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
