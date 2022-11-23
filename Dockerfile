@@ -47,6 +47,8 @@ copy run/start.sh /init.sh
 #copy run/start.sh /srv/init.sh
 VOLUME ["/srv"]
 COPY default.conf /etc/nginx/http.d/
+COPY cors.conf /etc/
+
 RUN /usr/local/bin/webmentiond  --help || true && /srv/remark42 --help 2>&1 |grep avatar
 RUN chmod +x /init.sh
 RUN nginx -t 
