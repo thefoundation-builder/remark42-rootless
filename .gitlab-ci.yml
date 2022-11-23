@@ -36,6 +36,8 @@ docker-build:
       fi
     - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
     - docker push "$CI_REGISTRY_IMAGE${tag}"
+    - git clone https://github.com/umputun/baseimage.git /tmp/baseimage
+    - cd /tmp/baseimage && 	docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8  --pull -t umputun/baseimage:buildgo-latest build.go -f build.go/Dockerfile
     - git clone https://github.com/umputun/remark42.git /tmp/remark42
     - docker-buildx create --use
     - docker-buildx build
