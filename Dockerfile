@@ -1,14 +1,14 @@
 
 ## integrate mailhog
 FROM mailhog/mailhog AS mailhog
-RUN echo hi
+RUN echo hi from mailhog
 
 
 ### integrate webmentiond
 
 #FROM alpine:3.14
 FROM zerok/webmentiond as webmention
-RUN echo heyhey
+RUN echo heyhey from webmentiond
 
 
 ## build from remark42
