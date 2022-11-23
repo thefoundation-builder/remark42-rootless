@@ -39,13 +39,12 @@ docker-build:
     - docker push "$CI_REGISTRY_IMAGE${tag}"
     - git clone https://github.com/umputun/baseimage.git /tmp/baseimage
 #    - cd /tmp/baseimage && 	docker buildx build --platform ${PLATFORMS}  --pull -t umputun/baseimage:buildgo-latest build.go -f build.go/Dockerfile
-    - cd /tmp/baseimage && 	docker buildx build --platform ${PLATFORMS}  --pull -t $CI_REGISTRY_IMAGE:baseimage_buildgo -f build.go/Dockerfile
-    - git clone https://github.com/umputun/remark42.git /tmp/remark42
-    - cd /tmp/remark42 && sed 's~^FROM .\+~FROM '$CI_REGISTRY_IMAGE:baseimage_buildgo'~g'
+    - cd /tmp/baseimage && 	docker buildx build --platform ${PLATFORMS}  --pull -t $CI_REGISTRY_IMAGE:baseimage_buildgo build.go -f build.go/Dockerfile
+    - cd /tmp/remark42 && sed 's~^FROM umputun/baseimage:buildgo.\+~FROM '$CI_REGISTRY_IMAGE:baseimage_buildgo'~g' -i Dockerfile
     - cd /tmp/remark42 && docker-buildx build
       --platform ${PLATFORMS}
       --tag $CI_REGISTRY_IMAGE:remark42-multiarch
-       -f /Dockerfile .   
+       -f Dockerfile .   
     - docker-buildx build
       --platform ${PLATFORMS}
       --tag $CI_REGISTRY_IMAGE${tag}
