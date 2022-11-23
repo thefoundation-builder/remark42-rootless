@@ -21,6 +21,7 @@ docker-build:
     - wget -O /usr/bin/docker-buildx
       https://github.com/docker/buildx/releases/download/${BUILDX_VERSION}/buildx-${BUILDX_VERSION}.${BUILDX_ARCH}
     - chmod +x /usr/bin/docker-buildx
+    - docker-buildx create --use
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - ( apt-get  update && apt -y install git)||apk add git
   # Default branch leaves tag empty (= latest tag)
@@ -40,7 +41,6 @@ docker-build:
 #    - cd /tmp/baseimage && 	docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8  --pull -t umputun/baseimage:buildgo-latest build.go -f build.go/Dockerfile
     - cd /tmp/baseimage && 	docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8  --pull -t umputun/baseimage:buildgo-v1.9.2 build.go -f build.go/Dockerfile
     - git clone https://github.com/umputun/remark42.git /tmp/remark42
-    - docker-buildx create --use
     - cd /tmp/remark42 && docker-buildx build
       --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
       --tag $CI_REGISTRY_IMAGE:remark42-multiarch
