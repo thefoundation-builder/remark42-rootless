@@ -37,13 +37,14 @@ docker-build:
     - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
     - docker push "$CI_REGISTRY_IMAGE${tag}"
     - git clone https://github.com/umputun/baseimage.git /tmp/baseimage
-    - cd /tmp/baseimage && 	docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8  --pull -t umputun/baseimage:buildgo-latest build.go -f build.go/Dockerfile
+#    - cd /tmp/baseimage && 	docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8  --pull -t umputun/baseimage:buildgo-latest build.go -f build.go/Dockerfile
+    - cd /tmp/baseimage && 	docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8  --pull -t umputun/baseimage:buildgo-v1.9.2 build.go -f build.go/Dockerfile
     - git clone https://github.com/umputun/remark42.git /tmp/remark42
     - docker-buildx create --use
-    - docker-buildx build
+    - cd /tmp/remark42 && docker-buildx build
       --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
-      --tag $CI_REGISTRY_IMAGE${tag}
-       -f /tmp/remark42/Dockerfile /tmp/remark42    
+      --tag $CI_REGISTRY_IMAGE:remark42-multiarch
+       -f /Dockerfile .   
     - docker-buildx build
       --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
       --tag $CI_REGISTRY_IMAGE${tag}
