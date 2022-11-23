@@ -1,11 +1,14 @@
 name: Build
 
-# Controls when the workflow will run
+name: Delete old workflow runs
 on:
   push:
     branches:
       - 'master'
       - 'main'
+  schedule:
+    - cron: '0 0 1 * *'
+# Run monthly, at 00:00 on the 1st day of month.
 #    tags:
 #      - 'v*.*.*'
   pull_request:
