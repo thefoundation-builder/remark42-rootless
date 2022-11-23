@@ -1,6 +1,6 @@
 image: alpine
 before_script:
-   - apk --update add openssh-client git bash
+   - apk --update add openssh-client git bash curl
    - /bin/bash -c "uptime ; curl -s ifconfig.co"
 #  - /bin/bash -c "test -d $HOME && (test -d ${HOME}/.ssh || mkdir -p  $HOME/.ssh) || mkdir -p  $HOME/.ssh "
 #  - ssh-keyscan -t rsa,dsa,ecdsa github.com >> ~/.ssh/ssh_known_hosts
