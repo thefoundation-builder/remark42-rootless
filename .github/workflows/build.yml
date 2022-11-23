@@ -1,6 +1,5 @@
 name: Build
 
-name: Delete old workflow runs
 on:
   push:
     branches:
