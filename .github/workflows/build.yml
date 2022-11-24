@@ -250,7 +250,7 @@ jobs:
               buildlogs
   scan-remark42:
     runs-on: ubuntu-latest
-    needs: build-remark42
+    needs:  [  build-base-mailhog | build-remark42 ]
     env:
       APT_HTTP_PROXY_URL: ${{ secrets.APT_HTTP_PROXY_URL }}
     environment: push-dockerhub
