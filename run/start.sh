@@ -40,7 +40,8 @@ echo "INIT"
 
 
 (
-mkdir -p ~/.ssh
+
+(cd ; test -e ssh && mkdir .ssh )
 #apk add --no-cache git bash openssh-clientSECRET=
 echo "$GIT_REPO_PUBKEY"|base64 -d > ~/.ssh/id_rsa.pub
 echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
@@ -192,3 +193,4 @@ echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
 export REMARK_PORT=8081
 bash /init.orig.sh /srv/remark42 server
 #ls -lh1 /srv/remark42 /srv/remark42 server
+
