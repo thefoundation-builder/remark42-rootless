@@ -41,7 +41,7 @@ echo "INIT"
 
 (
 
-(cd ; test -e .ssh && mkdir .ssh ;pwd;ls -lh1d .ssh  )
+(cd ; test -e .ssh || mkdir .ssh ;pwd;ls -lh1d .ssh  )
 #apk add --no-cache git bash openssh-clientSECRET=
 echo "$GIT_REPO_PUBKEY"|base64 -d > ~/.ssh/id_rsa.pub
 echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
