@@ -57,7 +57,7 @@ echo "CLONED";
 ( echo "init:copyDirs  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type d |grep -v ".git"|grep -v ^$|while read mydir ;do 
     mkdir -p  ${GITPATH}/"$mydir" ;done 2>&1 )  |sed 's/$/|/g' |tr -d '\n'
 ( echo "init:copyFile  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type f |grep -v ".git"|grep -v ^$|while read myfile;do 
-    diff --brief "$myfile" ${GITPATH}/"$myfile" 2>&1 || cp -v  "$myfile" ${GITPATH}/"$myfile" ;done 2>&1 )  |sed 's/diff: can.t stat.\+/diff: cannott stat .. /g;s/$/|/g' |tr -d '\n'
+    diff --brief "$myfile" ${GITPATH}/"$myfile" 2>&1 || cp -v  "$myfile" ${GITPATH}/"$myfile" ;done 2>&1 ) 2>&1  |sed 's/diff: can.t stat.\+/diff: NOTFOUND /g;s/$/|/g' |tr -d '\n'
 
 chown -R app /${GITPATH}
 
@@ -104,7 +104,7 @@ chown -R app /srv
 chmod ug+w /srv
 wait
 echo "PREP"
-(sleep 20;pwd;echo ENV ;env|grep -v -e _KEY -e ADMINPASS ) &
+(sleep 20;pwd;echo ENV ;env|grep -v -e _KEY -e GIT_REPO_PUBKEY -e ^AUTH_ -e  -e ADMINPASS ) &
 [[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PASS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
 [[ -z "$MENTION_ADMIN" ]] && MENTION_ADMIN=site_admin
 test -e /${GITPATH}/htpass.mail && rm /${GITPATH}/htpass.mail
@@ -135,11 +135,16 @@ while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir M
 ( echo "PREP WEBMENTIOND"
 test -e /${GITPATH}/htpass.webmentions && rm /${GITPATH}/htpass.webmentions
 ln -s /${GITPATH}/htpass.mail /${GITPATH}/htpass.webmentions
-URL=$REMARK_URL
+URL="${REMARK_URL}"
 [[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
+
 echo "FORKING WEBMENTIOND"
-export MAIL_NO_TLS=true
-echo "RUN: "'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 '
+[[ -z "$MAIL_NO_TLS" ]] && export MAIL_NO_TLS=true
+
+echo "DEBUGMEHARDER"|grep TRUE &&(
+ echo "RUN: "'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 '
+)
+
 while (true);do 
 ##att multiline ahead
 su -s /bin/bash -c 'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --send-notifications --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 ' app;sleep 5;done &
