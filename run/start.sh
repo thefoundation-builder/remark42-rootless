@@ -79,7 +79,8 @@ chown -R app /${GITPATH}
 [[ -z "$SMTP_HOST" ]]          && export SMTP_HOST=127.0.0.1
 [[ -z "$SMTP_PORT" ]]          && export SMTP_PORT=1025
 [[ -z "$SMTP_TLS" ]]           && export SMTP_TLS=false
-[[ -z "$SMTP_USERNAME" ]]      && export SMTP_USERNAME=postmaster@local.lan
+[[ -z "$SMTP_USERNAME" ]]      && { [[ -z "$SMTP_USER" ]] || export SMTP_USERNAME="${SMTP_USER}" ; } ; 
+
 [[ -z "$SMTP_PASSWORD" ]]      && export SMTP_PASSWORD=secretpassword
 [[ -z "$AUTH_EMAIL_FROM" ]]    && export AUTH_EMAIL_FROM=notify@local.lan
 [[ -z "$NOTIFY_EMAIL_FROM" ]]  && export NOTIFY_EMAIL_FROM=notify@local.lan
@@ -119,9 +120,10 @@ echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail "$MENTION_ADMIN"
   sed -i 's~/var/log/php7/.\+\.log~/dev/stderr~g' $(find  /etc/php* -type f ) &  
   mkdir -p /var/log/php7 ; 
   ln -sf /dev/stderr /var/log/php7/access.log & ln -sf /dev/stderr /var/log/php7/arror.log ; chown -R app:app /var/log/php7 &
-  wait  ;echo "FORKING FPM"; while (true);do su -s /bin/bash app -c "php-fpm7 --nodaemonize --force-stderr -d 'error_log = /dev/stderr;'";sleep 3;done 
-) & #end php-fpm
-
+  wait  ;
+  echo "FORKING FPM"; while (true);do su -s /bin/bash app -c "php-fpm7 --nodaemonize --force-stderr -d 'error_log = /dev/stderr;'";sleep 3;done 
+) & 
+#end php-fpm
 
 (
 test -e ${GITPATH}/mailhog_maildir || mkdir ${GITPATH}/mailhog_maildir   &
