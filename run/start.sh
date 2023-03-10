@@ -165,9 +165,10 @@ chown -R app /${GITPATH}
 ( sleep 60;  while (true);do ( 
                              
                              [[ -z "$GITPATH" ]] || ( 
+                               test -e /tmp/gitstorage || mkdir /tmp/gitstorage
                                cd /tmp/gitstorage
                                git config user.name "remarks42rootless" &>/dev/null
-                               git config user.email "you@example.com" &>/dev/null
+                               git config user.email "remarks42rootless@the-foundation.gitlab.io" &>/dev/null
                                git status
                               # git pull  --ff-only;
                                      cd ${GITPATH} ; pwd ;
@@ -186,8 +187,13 @@ chown -R app /${GITPATH}
 
  ## local quick tests
 (sleep 30;
-echo "testing interfaces" ;curl -kLv 127.0.0.1:8081/web/embed.js 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;echo "###";curl -kLv 127.0.0.1:8023/ui/ 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
-echo "testing interfaces (nginx)" ;curl -kLv 127.0.0.1:8080/web/embed.js 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;echo "###";curl -kLv 127.0.0.1:8080/webmentions/ui/ 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
+echo "testing interfaces" ;
+    curl -kLv 127.0.0.1:8081/web/embed.js 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;echo "###";
+    curl -kLv 127.0.0.1:8023/ui/ 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
+
+echo "testing interfaces (nginx)" ;
+    curl -kLv 127.0.0.1:8080/web/embed.js 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;echo "###";
+    curl -kLv 127.0.0.1:8080/webmentions/ui/ 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
  ) &
 cd /srv
 echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
