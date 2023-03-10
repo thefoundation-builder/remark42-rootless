@@ -13,6 +13,13 @@ remark42 with webmentiond rootless with Pingback and MailHog
 | PingBack (RECEIVE) | Y |  /webmentions/pingback |
 | Ping | N |  /ping |
 
+## endpoints
+
+| NAME | Example Value | Explanation |
+|---|---|---|
+| Ping | N |  /ping |
+
+
 ---
 
 <h3>A project of the foundation</h3>
