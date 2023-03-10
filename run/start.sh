@@ -14,8 +14,11 @@
 [[ -z "$GIT_REPO_PUBKEY" ]]    &&  exit 1
 
 oneline() { tr -d '\n' ; } ;
+
 [[ -z "$GITPATH" ]] && export   GITPATH=/srv/
-test -e $GITPATH || { echo mkdir $GITPATH;mkdir  -p "$GITPATH" ; } ;
+[[ -z "$GITPATH" ]] && GITPATH=/srv/
+
+test -e $GITPATH || { echo mkdir "$GITPATH";mkdir  -p "$GITPATH" ; } ;
 
 
 myclone() {
@@ -34,10 +37,10 @@ git add -A  ;git commit -m $(date +%F_%T)"auto";
 git push $@ 2>&1|grep -v -e "Warning: Permanently added the RSA host key for IP address " -e "To "; } ;
 
 echo "INIT"
-[[ -z "$GITPATH" ]] && export  GITPATH=/srv/
+
 
 (
-mkdir ~/.ssh -p
+mkdir -p ~/.ssh
 #apk add --no-cache git bash openssh-clientSECRET=
 echo "$GIT_REPO_PUBKEY"|base64 -d > ~/.ssh/id_rsa.pub
 echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
@@ -148,7 +151,7 @@ su -s /bin/bash -c 'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MA
 #cat /init.orig.sh
 #printenv
 echo "FORKING nginx"
-while (true);do nginx -g "daemon off;" ;sleep 5;done &
+while (true);do nginx -g "daemon off;" 2>&1 |grep -v -e 'KEEPALIVE /api/v1/events$' -e 'Uptime-Kuma' -e 'UptimeRobot' -e 'Uptime-Robot' ;sleep 5;done &
 chown -R app /${GITPATH}
 
 ### git push loop 
