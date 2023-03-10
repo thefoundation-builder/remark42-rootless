@@ -91,10 +91,14 @@ chown -R app /${GITPATH}
 
 ## inverse logic
 export MAIL_NO_TLS=false
-[[ "$SMTP_TLS" = "false" ]]    && export=MAIL_NO_TLS=true
+[[ "$SMTP_TLS" = "false" ]]    && export MAIL_NO_TLS=true
+[[ -z "$MAIL_NO_TLS" ]] && export MAIL_NO_TLS=true
+echo "MAIL TLS SETTINGS:"
+echo MAIL_NO_TLS $MAIL_NO_TLS
+echo SMTP_TLS    $SMTP_TLS
+
 
 ## keyscan
-
 
 #myclone ${GIT_REPO_SYNC}  ${GITPATH} || mkdir -p  ${GITPATH}
 #DO NOT RUN WITHOUT STORAGE FROM GIT 
@@ -110,8 +114,6 @@ echo "PREP"
 [[ -z "$MENTION_ADMIN" ]] && MENTION_ADMIN=site_admin
 test -e /${GITPATH}/htpass.mail && rm /${GITPATH}/htpass.mail
 echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail "$MENTION_ADMIN"
-
-
 
 ( 
   sed -i 's~/var/log/php7/.\+\.log~/dev/stderr~g' $(find  /etc/php* -type f ) &  
@@ -140,7 +142,6 @@ URL="${REMARK_URL}"
 [[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 
 echo "FORKING WEBMENTIOND"
-[[ -z "$MAIL_NO_TLS" ]] && export MAIL_NO_TLS=true
 
 echo "DEBUGMEHARDER"|grep TRUE &&(
  echo "RUN: "'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 '
