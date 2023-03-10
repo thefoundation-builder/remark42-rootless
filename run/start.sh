@@ -109,7 +109,7 @@ chown -R app /srv
 chmod ug+w /srv
 wait
 echo "PREP"
-(sleep 20;pwd;echo ENV ;env|grep -v -e _KEY -e GIT_REPO_PUBKEY -e ^AUTH_ -e  -e ADMINPASS ) &
+(sleep 20;pwd;echo ENV ;env|grep -v -e _KEY -e GIT_REPO_PUBKEY -e ^AUTH_   -e ADMINPASS ) &
 [[ -z "$MENTION_ADMINPASS" ]] && { MENTION_ADMINPASS=$RANDOM_$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 23);echo "YOU DID NOT SET A ADMIN PASS FOR WEBMENTIONS IT IS NOW $MENTION_ADMINPASS " ; } ;
 [[ -z "$MENTION_ADMIN" ]] && MENTION_ADMIN=site_admin
 test -e /${GITPATH}/htpass.mail && rm /${GITPATH}/htpass.mail
