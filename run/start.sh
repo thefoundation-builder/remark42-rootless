@@ -166,7 +166,7 @@ su -s /bin/bash app -c 'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD
 #cat /init.orig.sh
 #printenv
 echo "FORKING nginx"
-while (true);do nginx -g "daemon off;" 2>&1 |grep -v -e 'KEEPALIVE /api/v1/events$' -e 'Uptime-Kuma' -e 'UptimeRobot' -e 'Uptime-Robot' ;sleep 5;done &
+nginx -t && while (true);do nginx -g "daemon off;" 2>&1 |grep -v -e 'KEEPALIVE /api/v1/events$' -e 'Uptime-Kuma' -e 'UptimeRobot' -e 'Uptime-Robot' ;sleep 5;done &
 chown -R app /${GITPATH}
 
 ### git push loop
