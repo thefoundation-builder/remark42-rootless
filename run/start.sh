@@ -1,6 +1,12 @@
 #!/bin/bash
+date -u +%s > /dev/shm/.starttime
 
-
+echo '<?php
+$mydate=shell_exec("date -u +%s");
+$startdate=file_get_contents("/dev/shm/.starttime");
+print(intval($mydate) - intval($startdate));' > /var/www/uptime.php
+chmod a+r  /var/www/uptime.php
+chmod go-w /var/www/uptime.php
 
 ## e.g.
 ## echo GIT_REPO_PUBKEY=$(base64 -w0 .ssh/id_rsa.pub ) >> /tmp/.env
