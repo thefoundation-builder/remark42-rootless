@@ -151,7 +151,7 @@ echo "DEBUGMEHARDER"|grep TRUE &&(
 
 while (true);do
 ##att multiline ahead
-su -s /bin/bash -c 'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$REMARK_URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --send-notifications --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 ' app;sleep 5;done &
+su -s /bin/bash app -c 'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$REMARK_URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --send-notifications --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 ' 2>&1 |grep -v -e 'KEEPALIVE /api/v1/events$' ;sleep 5;done &
 ##[[ -z "$SECRET" ]] && echo no secret set
 ##[[ -z "$SECRET" ]] && SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 ##export SECRET=${SECRET}
