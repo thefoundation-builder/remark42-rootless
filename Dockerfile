@@ -15,16 +15,16 @@ RUN echo heyhey from webmentiond
 FROM umputun/remark42:latest
 
 USER 0
-#RUN apk add --no-cache git bash jq 
+#RUN apk add --no-cache git bash jq
 #RUN apk add --no-cache curl findutils  psmisc psutils
 #RUN apk add --no-cache openssh-client
-RUN    mkdir -p /var/www/webmentions /var/lib/webmentiond/frontend && apk add --no-cache php-fpm php-xmlrpc sqlite-dev curl findutils git bash jq  openssh-client inotify-tools nginx apache2-utils python3 # golang 
+RUN    mkdir -p /var/www/webmentions /var/lib/webmentiond/frontend && apk add --no-cache php-fpm php-xmlrpc sqlite-dev curl findutils git bash jq  openssh-client inotify-tools nginx apache2-utils python3 # golang
 
 #VOLUME ["/data"]
 #RUN adduser -u 1500 -h /data -H -D webmentiond && \
 
 COPY --from=webmention /var/lib/webmentiond/migrations /var/lib/webmentiond/migrations
-COPY --from=webmention /usr/local/bin/webmentiond /usr/local/bin/webmentiond 
+COPY --from=webmention /usr/local/bin/webmentiond /usr/local/bin/webmentiond
 COPY --from=webmention /var/lib/webmentiond/frontend/dist /var/lib/webmentiond/frontend/dist
 COPY --from=webmention /var/lib/webmentiond/frontend/css /var/lib/webmentiond/frontend/css
 COPY --from=webmention /var/lib/webmentiond/frontend/index.html  /var/lib/webmentiond/frontend/index.html
@@ -38,18 +38,19 @@ COPY --from=mailhog /usr/local/bin/MailHog /usr/local/bin/MailHog
 COPY pingback.php /var/www/webmentions/pingback.php
 ### Expose the SMTP and HTTP ports:
 ##EXPOSE 1025 8025
-RUN sed -i 's~/var/log/php7/error.log~/dev/stderr~g' $(find  /etc/php* -type f );  
+RUN sed -i 's~/var/log/php7/error.log~/dev/stderr~g' $(find  /etc/php* -type f );
 
 RUN mv /init.sh /init.orig.sh
 #RUN ln -sf /run/start.sh /init.sh
-#RUN ln -sf /start/init.sh /srv/init.sh 
+#RUN ln -sf /start/init.sh /srv/init.sh
 copy run/start.sh /init.sh
 #copy run/start.sh /srv/init.sh
 VOLUME ["/srv"]
 COPY default.conf /etc/nginx/http.d/
 COPY cors.conf /etc/nginx-cors.conf
+COPY realip.conf /etc/nginx-realip.conf
 
 RUN /usr/local/bin/webmentiond  --help || true && /srv/remark42 --help 2>&1 |grep avatar
 RUN chmod +x /init.sh
-RUN nginx -t 
+RUN nginx -t
 EXPOSE 8080
