@@ -97,6 +97,7 @@ chown -R app /${GITPATH}
 
 [[ -z "$ALLOWED_TARGET_DOMAINS" ]] || [[ -z "$ALLOWED_DOMAINS" ]]   && export ALLOWED_DOMAINS=$ALLOWED_TARGET_DOMAINS
 [[ -z "$ALLOWED_DOMAINS" ]]    && export ALLOWED_DOMAINS=$(echo "$REMARK_URL" |cut -d"/" -f3|cut -d: -f1)
+echo "ALLOWED_DOMAINS=$ALLOWED_DOMAINS"
 
 ## inverse logic
 export MAIL_NO_TLS=false
