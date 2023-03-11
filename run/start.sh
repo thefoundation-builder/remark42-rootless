@@ -48,24 +48,24 @@ echo "$GIT_REPO_KEY"   |base64 -d > ~/.ssh/id_rsa
 chmod 0600 ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
 ssh-keyscan  gitlab.com >>  ~/.ssh/known_hosts 2>&1 | oneline
 ssh-keyscan  github.com >>  ~/.ssh/known_hosts  2>&1 | oneline
-myclone ${GIT_REPO_SYNC} /tmp/gitstorage 
+myclone ${GIT_REPO_SYNC} /tmp/gitstorage
 [[ -z "${GITPATH}" ]] || mkdir -p "${GITPATH}" &
 echo "CLONED";
 
 #find /tmp/gitstorage |grep -v /tmp/gitstorage/.git/ |sed 's/$/|/g' |tr -d '\n' &
 
 
-( echo "init:copyDirs  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type d |grep -v ".git"|grep -v ^$|while read mydir ;do 
+( echo "init:copyDirs  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type d |grep -v ".git"|grep -v ^$|while read mydir ;do
     mkdir -p  ${GITPATH}/"$mydir" ;done 2>&1 )  |sed 's/$/|/g' |tr -d '\n'
-( echo "init:copyFile  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type f |grep -v ".git"|grep -v ^$|while read myfile;do 
+( echo "init:copyFile  /tmp/gitstorage  ${GITPATH}/" ;cd /tmp/gitstorage/ ;find -mindepth 1 -type f |grep -v ".git"|grep -v ^$|while read myfile;do
     diff --brief "$myfile" ${GITPATH}/"$myfile" 2>&1 || cp -v  "$myfile" ${GITPATH}/"$myfile" ;done 2>&1 ) 2>&1  |sed 's/diff: can.t stat.\+/diff: NOTFOUND /g;s/$/|/g' |tr -d '\n'
 
 chown -R app /${GITPATH}
 
 #[[ -z "$GITPATH" ]] || ( cd "${GITPATH}" && git pull )
-[[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH" 
+[[ -z "$GIT_REPO_BACKUP" ]] || myclone ${GIT_REPO_BACKUP} "$BACKUP_PATH"
 
-) &       
+) &
 
 [[ -z "$REMARK_URL" ]]        && export REMARK_URL=http://127.0.0.1:8080
 [[ -z "$SLEEPINTER" ]]        && SLEEPINTER=90
@@ -79,7 +79,7 @@ chown -R app /${GITPATH}
 [[ -z "$SMTP_HOST" ]]          && export SMTP_HOST=127.0.0.1
 [[ -z "$SMTP_PORT" ]]          && export SMTP_PORT=1025
 [[ -z "$SMTP_TLS" ]]           && export SMTP_TLS=false
-[[ -z "$SMTP_USERNAME" ]]      && { [[ -z "$SMTP_USER" ]] || export SMTP_USERNAME="${SMTP_USER}" ; } ; 
+[[ -z "$SMTP_USERNAME" ]]      && { [[ -z "$SMTP_USER" ]] || export SMTP_USERNAME="${SMTP_USER}" ; } ;
 
 [[ -z "$SMTP_PASSWORD" ]]      && export SMTP_PASSWORD=secretpassword
 [[ -z "$AUTH_EMAIL_FROM" ]]    && export AUTH_EMAIL_FROM=notify@local.lan
@@ -102,7 +102,7 @@ echo SMTP_TLS    $SMTP_TLS
 ## keyscan
 
 #myclone ${GIT_REPO_SYNC}  ${GITPATH} || mkdir -p  ${GITPATH}
-#DO NOT RUN WITHOUT STORAGE FROM GIT 
+#DO NOT RUN WITHOUT STORAGE FROM GIT
 
 mkdir -p ${STORE_BOLT_PATH}
 test -e /$GITPATH/var || mkdir -p /$GITPATH/var
@@ -116,13 +116,13 @@ echo "PREP"
 test -e /${GITPATH}/htpass.mail && rm /${GITPATH}/htpass.mail
 echo $MENTION_ADMINPASS |htpasswd -cBi  /${GITPATH}/htpass.mail "$MENTION_ADMIN"
 
-( 
-  sed -i 's~/var/log/php7/.\+\.log~/dev/stderr~g' $(find  /etc/php* -type f ) &  
-  mkdir -p /var/log/php7 ; 
+(
+  sed -i 's~/var/log/php7/.\+\.log~/dev/stderr~g' $(find  /etc/php* -type f ) &
+  mkdir -p /var/log/php7 ;
   ln -sf /dev/stderr /var/log/php7/access.log & ln -sf /dev/stderr /var/log/php7/arror.log ; chown -R app:app /var/log/php7 &
   wait  ;
-  echo "FORKING FPM"; while (true);do su -s /bin/bash app -c "php-fpm7 --nodaemonize --force-stderr -d 'error_log = /dev/stderr;'";sleep 3;done 
-) & 
+  echo "FORKING FPM"; while (true);do su -s /bin/bash app -c "php-fpm7 --nodaemonize --force-stderr -d 'error_log = /dev/stderr;'";sleep 3;done
+) &
 #end php-fpm
 
 (
@@ -130,7 +130,7 @@ test -e ${GITPATH}/mailhog_maildir || mkdir ${GITPATH}/mailhog_maildir   &
 test -e ${GITPATH}/mailhog_config  || mkdir ${GITPATH}/mailhog_config    &
 wait
  echo "FORKING MAIL UI"
-while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir MH_STORAGE=maildir /usr/local/bin/MailHog mailhog" 2>&1 |grep -e API -e "To:" -e "Subject:" -e " Found " -e Message-Id  ;sleep 5;done 
+while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir MH_STORAGE=maildir /usr/local/bin/MailHog mailhog" 2>&1 |grep -e API -e "To:" -e "Subject:" -e " Found " -e Message-Id  ;sleep 5;done
 ) & ##end mailhog
 
 
@@ -146,14 +146,14 @@ URL="${REMARK_URL}"
 echo "FORKING WEBMENTIOND"
 
 echo "DEBUGMEHARDER"|grep TRUE &&(
- echo "RUN: "'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 '
+ echo "RUN: "'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$REMAK_URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 '
 )
 
-while (true);do 
+while (true);do
 ##att multiline ahead
-su -s /bin/bash -c 'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --send-notifications --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 ' app;sleep 5;done &
+su -s /bin/bash -c 'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$REMARK_URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --send-notifications --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 ' app;sleep 5;done &
 ##[[ -z "$SECRET" ]] && echo no secret set
-##[[ -z "$SECRET" ]] && SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM 
+##[[ -z "$SECRET" ]] && SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 ##export SECRET=${SECRET}
 ) & ##end webmentiond
 
@@ -163,10 +163,10 @@ echo "FORKING nginx"
 while (true);do nginx -g "daemon off;" 2>&1 |grep -v -e 'KEEPALIVE /api/v1/events$' -e 'Uptime-Kuma' -e 'UptimeRobot' -e 'Uptime-Robot' ;sleep 5;done &
 chown -R app /${GITPATH}
 
-### git push loop 
-( sleep 60;  while (true);do ( 
-                             
-                             [[ -z "$GITPATH" ]] || ( 
+### git push loop
+( sleep 60;  while (true);do (
+
+                             [[ -z "$GITPATH" ]] || (
                                test -e /tmp/gitstorage || mkdir /tmp/gitstorage
                                cd /tmp/gitstorage
                                git config user.name "remarks42rootless" &>/dev/null
@@ -175,14 +175,14 @@ chown -R app /${GITPATH}
                               # git pull  --ff-only;
                                      cd ${GITPATH} ; pwd ;
                                      find -type d -mindepth 1|grep -v ".git"|while read mydir ;do test -e /tmp/gitstorage/"$mydir"  || mkdir -p test /tmp/gitstorage/"$mydir" ;done
-                                     find -type f -mindepth 1 |grep -v -e  "^/.git" -e "^./remark42$" -e "^./web/" |while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done 
+                                     find -type f -mindepth 1 |grep -v -e  "^/.git" -e "^./remark42$" -e "^./web/" |while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done
                                      cd /tmp/gitstorage/ ;
-                                     
+
                                      git add -A
                                      mypush --force
                                      ) |sed 's/$/|/g' |tr -d '\n'
-                            
-                            [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )    ) ; 
+
+                            [[ -z "$GIT_REPO_BACKUP" ]] || ( cd "$BACKUP_PATH" ; pwd git add -A  ;git commit -m $(date +%F_%T)"auto" ;mypush )    ) ;
                             cd $GITPATH; sleep 30;inotifywait -e delete -e create -e move -e move_self -e modify -e attrib $(find $GITPATH)  ; done
  ) &
 
@@ -202,4 +202,3 @@ echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
 export REMARK_PORT=8081
 bash /init.orig.sh /srv/remark42 server
 #ls -lh1 /srv/remark42 /srv/remark42 server
-
