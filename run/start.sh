@@ -170,7 +170,8 @@ nginx -T|grep -e access_log -e error_log |sort -u
 
 (nginx -t && (while (true);do nginx -g "daemon off;" 2>&1 ;sleep 5;done) | while read logline ;do echo "$logline"|grep -v -e 'KEEPALIVE /api/v1/events$' -e 'Uptime-Kuma' -e 'UptimeRobot' -e 'Uptime-Robot' ;done ) &
 
-chown -R app /${GITPATH}
+[[ -z "$GITPATH" ]] ||  chown -R app /${GITPATH}
+[[ -z "$GITPATH" ]] &&  chown -R app
 
 ### git push loop
 ( sleep 60;  while (true);do (
