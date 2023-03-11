@@ -94,6 +94,8 @@ chown -R app /${GITPATH}
 [[ -z "$BACKUP_PATH" ]]        && export BACKUP_PATH=/tmp/backup
 [[ -z "STORE_BOLT_PATH" ]]     && export STORE_BOLT_PATH=/srv/varmodify
 
+
+[[ -z "$ALLOWED_TARGET_DOMAINS" ]] || [[ -z "$ALLOWED_DOMAINS" ]]   && export ALLOWED_DOMAINS=$ALLOWED_TARGET_DOMAINS
 [[ -z "$ALLOWED_DOMAINS" ]]    && export ALLOWED_DOMAINS=$(echo "$REMARK_URL" |cut -d"/" -f3|cut -d: -f1)
 
 ## inverse logic
