@@ -36,6 +36,7 @@ WORKDIR /var/lib/webmentiond
 RUN adduser -D -u 1000 mailhog
 COPY --from=mailhog /usr/local/bin/MailHog /usr/local/bin/MailHog
 COPY pingback.php /var/www/webmentions/pingback.php
+COPY get-webmention.php /var/www/webmentions/webmention-full.php
 ### Expose the SMTP and HTTP ports:
 ##EXPOSE 1025 8025
 RUN sed -i 's~/var/log/php7/error.log~/dev/stderr~g' $(find  /etc/php* -type f );
