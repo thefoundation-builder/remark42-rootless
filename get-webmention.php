@@ -1,5 +1,6 @@
 <?php
-
+$cachedir="/tmp/.webmention_php_cache";
+mkdir($cachedir);
 function isJson($string) {
    json_decode($string);
    return json_last_error() === JSON_ERROR_NONE;
@@ -94,9 +95,9 @@ if(isJson($mentionjson) ) {
                 $parse = parse_url($elem["source"]);
                 $domain=$parse['host'];
                 if ($domain != "") {
-                     if(file_exists("/tmp/.favicon.cached.".$domain)) {
-                         //$outFavicon=base64_encode(file_get_contents("/tmp/.favicon.cached.".$domain));
-                         $outFavicon=file_get_contents("/tmp/.favicon.cached.".$domain);
+                     if(file_exists($cachedir."/favicon.cached.".$domain)) {
+                         //$outFavicon=base64_encode(file_get_contents($cachedir."/favicon.cached.".$domain));
+                         $outFavicon=file_get_contents($cachedir."/favicon.cached.".$domain);
                           } else {
                             if(isset($elem["type"]) && $elem["type"]=="pingback" ) {
                                 $outFavicon=$svg_pingback;
@@ -117,7 +118,7 @@ if(isJson($mentionjson) ) {
                                    } // end if md5 google default
                            } // end if domain empty
                          // Write the contents back to the file
-                         file_put_contents("/tmp/.favicon.cached.".$domain, $outFavicon);
+                         file_put_contents($cachedir."/favicon.cached.".$domain, $outFavicon);
                     } // end else file cached
             $sendelem=array();
             $sitemeta=get_meta_tags($elem["source"]);
@@ -133,7 +134,15 @@ if(isJson($mentionjson) ) {
             } else {
               $sendelem=$elem;
             }
-            $site_title=website_title($elem["source"]);
+            $titlecache=$cachedir."/title.cached.".md5($elem["source"]
+            if(file_exists($titlecache ) ) {
+              $site_title=file_get_contents($titlecache);
+            } else {
+              $site_title=website_title($elem["source"]);
+              if($site_title != "") {
+                file_put_contents($titlecache,$site_title)
+              }
+             }
              if($site_title != "") {
                 $sendelem["title"]=$site_title;
                 }
