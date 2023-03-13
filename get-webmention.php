@@ -150,7 +150,7 @@ if(isJson($mentionjson) ) {
                          file_put_contents($cachedir."/favicon.cached.".$domain, $outFavicon);
                     } // end else file cached
             $sendelem=array();
-            $metacache=$cachedir."/title.cached.".md5($elem["source"]);
+            $metacache=$cachedir."/meta.cached.".md5($elem["source"]);
             if(file_exists($metacache ) ) {
               $sitemeta=file_get_contents(json_decode($metacache));
             } else {
