@@ -142,7 +142,7 @@ if(isJson($mentionjson) ) {
             } else {
               $site_title=website_title($elem["source"]);
               if($site_title != "") {
-                file_put_contents($titlecache,$site_title)
+                file_put_contents($titlecache,$site_title);
               }
              }
              if($site_title != "") {
