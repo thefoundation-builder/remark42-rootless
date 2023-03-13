@@ -1,6 +1,8 @@
 <?php
 $cachedir="/tmp/.webmention_php_cache";
-mkdir($cachedir);
+if(!is_dir($cachedir)) {
+  mkdir($cachedir);
+}
 function isJson($string) {
    json_decode($string);
    return json_last_error() === JSON_ERROR_NONE;
