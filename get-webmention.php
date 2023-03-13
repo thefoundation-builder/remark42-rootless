@@ -150,7 +150,21 @@ if(isJson($mentionjson) ) {
                          file_put_contents($cachedir."/favicon.cached.".$domain, $outFavicon);
                     } // end else file cached
             $sendelem=array();
-            $sitemeta=get_meta_tags($elem["source"]);
+            $metacache=$cachedir."/title.cached.".md5($elem["source"]);
+            if(file_exists($metacache ) ) {
+              $sitemeta=file_get_contents(json_decode($metacache));
+            } else {
+              $tmpmeta=get_meta_tags($elem["source"]);
+
+              if(is_array($tmpmeta)) {
+                file_put_contents($metacache,json_encode($sitemeta));
+                $sitemeta=$tmpmeta;
+              } else {
+                 $sitemeta=array();
+              }
+             }
+
+
             ///// Notice how the keys are all lowercase now, and
             ///// how . was replaced by _ in the key.
             ///echo $tags['author'];       // name
