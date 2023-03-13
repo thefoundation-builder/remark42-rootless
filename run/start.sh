@@ -224,10 +224,10 @@ echo "testing interfaces (nginx)" ;
     curl -kLv 127.0.0.1:8080/webmentions/ui/ 2>&1|grep -v 'function()'|grep -e HTTP -e GET -e Error -e error -e Fail -e fail -e timeout -e 502  -e 404 ;
  ) &
 cd /srv
-echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
+echo "STARTING  REMARK42 with  /srv/remark42 server --secret __________"
 export REMARK_PORT=8081
 while (true);do
-grep -q TRUE /tmp/NEED_TO_EXIT || bash /init.orig.sh /srv/remark42 server
+grep -q TRUE /tmp/NEED_TO_EXIT || bash /init.orig.sh /srv/remark42 server --secret "$JWTSECRET"
 sleep 10
 done
 
