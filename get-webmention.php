@@ -68,7 +68,7 @@ try {
 $target=$_GET["target"];
 
 //$webmentiond_target="https://my.webmention.d/webmentions/get?target=".$target;
-$webmentiond_target="http://127.0.0.1/webmentions/get?target=".$target;
+$webmentiond_target="http://127.0.0.1:8023/webmentions/get?target=".$target;
 
 //https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://www.apple.com&size=256
 //https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://www.apple.com&size=256
