@@ -21,10 +21,10 @@ function cors() {
         //header('Access-Control-Allow-Methods: PUT, GET, POST, DELETE, OPTIONS');
         if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
             header("Access-Control-Allow-Headers: ".$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
-
         exit(0);
     }
 cors();
+
 $cachedir="/tmp/.webmention_php_cache";
 if(!is_dir($cachedir)) {
   mkdir($cachedir);
