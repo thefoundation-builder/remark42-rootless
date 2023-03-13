@@ -1,12 +1,20 @@
 #!/bin/bash
+echo FALSE  > /tmp/NEED_TO_EXIT
+
 date -u +%s > /dev/shm/.starttime
 
+(
+mkdir /tmp/.incoming_http_hosts
+chmod a+rw /tmp/.incoming_http_hosts/ &>/dev/null
+
 echo '<?php
+$emptys=shell_exec("touch /tmp/.incoming_http_hosts/".$_SERVER["HTTP_HOST"] );
 $mydate=shell_exec("date -u +%s");
+
 $startdate=file_get_contents("/dev/shm/.starttime");
 print(intval($mydate) - intval($startdate));' > /var/www/uptime.php
 chmod a+r  /var/www/uptime.php
-chmod go-w /var/www/uptime.php
+chmod go-w /var/www/uptime.php ) &
 
 ## e.g.
 ## echo GIT_REPO_PUBKEY=$(base64 -w0 .ssh/id_rsa.pub ) >> /tmp/.env
@@ -155,12 +163,18 @@ URL="${REMARK_URL}"
 echo "FORKING WEBMENTIOND"
 
 echo "DEBUGMEHARDER"|grep TRUE &&(
- echo "RUN: "'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$REMAK_URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 '
+ echo "RUN:           "'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$REMAK_URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"  --send-notifications--database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 '
 )
 
 while (true);do
 ##att multiline ahead
-su -s /bin/bash app -c 'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$REMARK_URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --send-notifications --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 ' 2>&1 |grep -v -e 'KEEPALIVE /api/v1/events$' ;sleep 5;done &
+su -s /bin/bash app -c 'MAIL_NO_TLS='$MAIL_NO_TLS' MAIL_PASSWORD='$SMTP_PASSWORD' MAIL_USER='$SMTP_USERNAME'  MAIL_FROM='$NOTIFY_EMAIL_FROM' MAIL_PORT='$SMTP_PORT' EMAIL_HOST='$SMTP_HOST' MAIL_HOST='$SMTP_HOST'   SERVER_AUTH_JWT_SECRET='$JWTSECRET' /usr/local/bin/webmentiond serve    --public-url='$REMARK_URL'/webmentions      --addr 127.0.0.1:8023 --allowed-target-domains "'$ALLOWED_DOMAINS'"    --auth-admin-emails "'$ADMIN_MAIL'"        --send-notifications --database-migrations /var/lib/webmentiond/migrations    --database /'${GITPATH}'/webmentiond.sqlite     --verification-timeout=120s    --verification-max-redirects=5 ' 2>&1|while read wmlog;do
+    echo "$wmlog" |grep -v -e 'KEEPALIVE /api/v1/events$';
+    echo "$wmlog" |grep -q 'failed to fetch updates: unexpected telegram API status code 409, error: "Conflict: terminated by other getUpdates' && (
+      echo TRUE > /tmp/NEED_TO_EXIT
+    ) ;done  ;
+    ## sleep before respawn
+    sleep 5;done &
 ##[[ -z "$SECRET" ]] && echo no secret set
 ##[[ -z "$SECRET" ]] && SECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 ##export SECRET=${SECRET}
@@ -190,7 +204,6 @@ nginx -T|grep -e access_log -e error_log |sort -u
                                      find -type d -mindepth 1|grep -v ".git"|while read mydir ;do test -e /tmp/gitstorage/"$mydir"  || mkdir -p test /tmp/gitstorage/"$mydir" ;done
                                      find -type f -mindepth 1 |grep -v -e  "^/.git" -e "^./remark42$" -e "^./web/" |while read myfile;do cp -v  "$myfile" /tmp/gitstorage/"$myfile" ;done
                                      cd /tmp/gitstorage/ ;
-
                                      git add -A
                                      mypush --force
                                      ) |sed 's/$/|/g' |tr -d '\n'
@@ -213,5 +226,25 @@ echo "testing interfaces (nginx)" ;
 cd /srv
 echo "STARTING  REMARK42 with  /srv/remark42 server --secret $SECRET"
 export REMARK_PORT=8081
-bash /init.orig.sh /srv/remark42 server
+while (true);do
+grep -q TRUE /tmp/NEED_TO_EXIT || bash /init.orig.sh /srv/remark42 server
+sleep 10
+done
+
+while (true);do
+
+grep -q TRUE /tmp/NEED_TO_EXIT && {
+  echo "QUITTING"
+  killall -QUIT remark42 &
+  killall -QUIT webmentiond &
+  sleep 1
+  cd /tmp/gitstorage/ ;
+
+  git add -A
+  mypush
+  killall -QUIT nginx
+  exit 0
+}
+sleep 20
+done
 #ls -lh1 /srv/remark42 /srv/remark42 server

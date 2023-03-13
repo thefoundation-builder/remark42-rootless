@@ -2,6 +2,9 @@
 //from https://github.com/w3c/webmention/blob/master/pingback.php
 $body = trim(file_get_contents('php://input'));
 
+$emptys=shell_exec("test -e touch /tmp/.incoming_http_hosts/ || mkdir touch /tmp/.incoming_http_hosts/" );
+$emptys=shell_exec("touch /tmp/.incoming_http_hosts/".$_SERVER["HTTP_HOST"] );
+
 if(!$body) {
   header('HTTP/1.1 405 Method Not Allowed');
   header('Content-type: text/plain');
@@ -27,5 +30,5 @@ if($rpc && is_array($rpc) && count($rpc) == 2) {
   header('Content-type: text/xml');
   echo xmlrpc_encode('pingback_accepted');
 } else {
-  header('HTTP/1.1 400 Bad Request');  
+  header('HTTP/1.1 400 Bad Request');
 }
