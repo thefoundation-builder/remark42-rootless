@@ -155,7 +155,6 @@ if(isJson($mentionjson) ) {
               $sitemeta=file_get_contents(json_decode($metacache));
             } else {
               $tmpmeta=get_meta_tags($elem["source"]);
-
               if(is_array($tmpmeta)) {
                 file_put_contents($metacache,json_encode($sitemeta));
                 $sitemeta=$tmpmeta;
