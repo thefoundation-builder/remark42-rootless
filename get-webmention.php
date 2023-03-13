@@ -128,7 +128,11 @@ if(isJson($mentionjson) ) {
             ///echo $tags['description'];  // a php manual
             ///echo $tags['geo_position']; // 49.33;-86.59;
             //$sendelem=array_merge($sitemeta,$elem);
-            $sendelem=$sitemeta+$elem;
+            if(is_array($sitemeta) ) {
+              $sendelem=$sitemeta+$elem;
+            } else {
+              $sendelem=$elem;
+            }
             $site_title=website_title($elem["source"]);
              if($site_title != "") {
                 $sendelem["title"]=$site_title;
