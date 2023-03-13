@@ -134,7 +134,7 @@ if(isJson($mentionjson) ) {
             } else {
               $sendelem=$elem;
             }
-            $titlecache=$cachedir."/title.cached.".md5($elem["source"]
+            $titlecache=$cachedir."/title.cached.".md5($elem["source"]);
             if(file_exists($titlecache ) ) {
               $site_title=file_get_contents($titlecache);
             } else {
