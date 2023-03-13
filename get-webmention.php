@@ -118,18 +118,17 @@ if(isJson($mentionjson) ) {
                          // Write the contents back to the file
                          file_put_contents("/tmp/.favicon.cached.".$domain, $outFavicon);
                     } // end else file cached
-            $site_title=website_title($elem["source"]);
             $sendelem=array();
             $sitemeta=get_meta_tags($elem["source"]);
+            ///// Notice how the keys are all lowercase now, and
+            ///// how . was replaced by _ in the key.
+            ///echo $tags['author'];       // name
+            ///echo $tags['keywords'];     // php documentation
+            ///echo $tags['description'];  // a php manual
+            ///echo $tags['geo_position']; // 49.33;-86.59;
             //$sendelem=array_merge($sitemeta,$elem);
             $sendelem=$sitemeta+$elem;
-
-             ///// Notice how the keys are all lowercase now, and
-             ///// how . was replaced by _ in the key.
-             ///echo $tags['author'];       // name
-             ///echo $tags['keywords'];     // php documentation
-             ///echo $tags['description'];  // a php manual
-             ///echo $tags['geo_position']; // 49.33;-86.59;
+            $site_title=website_title($elem["source"]);
              if($site_title != "") {
                 $sendelem["title"]=$site_title;
                 }
