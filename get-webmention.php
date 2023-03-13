@@ -95,7 +95,8 @@ if(isJson($mentionjson) ) {
                 $domain=$parse['host'];
                 if ($domain != "") {
                      if(file_exists("/tmp/.favicon.cached.".$domain)) {
-                         $outFavicon=base64_encode(file_get_contents("/tmp/.favicon.cached.".$domain));
+                         //$outFavicon=base64_encode(file_get_contents("/tmp/.favicon.cached.".$domain));
+                         $outFavicon=file_get_contents("/tmp/.favicon.cached.".$domain);
                           } else {
                             if(isset($elem["type"]) && $elem["type"]=="pingback" ) {
                                 $outFavicon=$svg_pingback;
