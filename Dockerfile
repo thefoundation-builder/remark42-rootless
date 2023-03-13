@@ -18,7 +18,7 @@ USER 0
 #RUN apk add --no-cache git bash jq
 #RUN apk add --no-cache curl findutils  psmisc psutils
 #RUN apk add --no-cache openssh-client
-RUN    mkdir -p /var/www/webmentions /var/lib/webmentiond/frontend && apk add --no-cache php-fpm php-xmlrpc php-curl php-dom php-json sqlite-dev curl findutils git bash jq  openssh-client inotify-tools nginx apache2-utils python3 # golang
+RUN    mkdir -p /var/www/webmentions /var/lib/webmentiond/frontend && apk add --no-cache php-fpm php-xmlrpc php-curl php-dom php-json php-openssl sqlite-dev curl findutils git bash jq  openssh-client inotify-tools nginx apache2-utils python3 # golang
 
 #VOLUME ["/data"]
 #RUN adduser -u 1500 -h /data -H -D webmentiond && \
