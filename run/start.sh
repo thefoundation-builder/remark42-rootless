@@ -227,7 +227,7 @@ cd /srv
 echo "STARTING  REMARK42 with  /srv/remark42 server --secret __________"
 export REMARK_PORT=8081
 while (true);do
-grep -q TRUE /tmp/NEED_TO_EXIT || bash /init.orig.sh /srv/remark42 server --secret "$JWTSECRET"
+grep -q TRUE /tmp/NEED_TO_EXIT || bash /init.orig.sh /srv/remark42 server --auth.same-site=none --secret "$JWTSECRET" 2>&1 |grep -v -e 'KEEPALIVE /api/v1/events$'
 sleep 10
 done
 
