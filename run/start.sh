@@ -102,11 +102,14 @@ chown -R app /${GITPATH}
 [[ -z "$BACKUP_PATH" ]]        && export BACKUP_PATH=/tmp/backup
 [[ -z "STORE_BOLT_PATH" ]]     && export STORE_BOLT_PATH=/srv/varmodify
 
+[[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
 
 [[ -z "$ALLOWED_TARGET_DOMAINS" ]] || [[ -z "$ALLOWED_DOMAINS" ]]   && export ALLOWED_DOMAINS=$ALLOWED_TARGET_DOMAINS
 [[ -z "$ALLOWED_DOMAINS" ]]    && export ALLOWED_DOMAINS=$(echo "$REMARK_URL" |cut -d"/" -f3|cut -d: -f1)
 echo "ALLOWED_DOMAINS=$ALLOWED_DOMAINS"
 
+
+ 
 ## inverse logic
 export MAIL_NO_TLS=false
 [[ "$SMTP_TLS" = "false" ]]    && export MAIL_NO_TLS=true
@@ -158,7 +161,7 @@ while (true);do su -s /bin/bash -c "MH_MAILDIR_PATH=${GITPATH}/mailhog_maildir M
 test -e /${GITPATH}/htpass.webmentions && rm /${GITPATH}/htpass.webmentions
 ln -s /${GITPATH}/htpass.mail /${GITPATH}/htpass.webmentions
 URL="${REMARK_URL}"
-[[ -z "$JWTSECRET" ]] && JWTSECRET=$(cat /dev/urandom|tr -cd '[:alnum:]' |head -c 10 )$RANDOM
+
 
 echo "FORKING WEBMENTIOND"
 
@@ -226,6 +229,7 @@ echo "testing interfaces (nginx)" ;
 cd /srv
 echo "STARTING  REMARK42 with  /srv/remark42 server --secret __________"
 export REMARK_PORT=8081
+[[ -z "$JWTSECRET" ]] && echo "DANGER: EMPTY JWT SECRET"
 while (true);do
 grep -q TRUE /tmp/NEED_TO_EXIT || bash /init.orig.sh /srv/remark42 server --auth.same-site=none --secret "$JWTSECRET" 2>&1 |grep -v -e 'KEEPALIVE /api/v1/events$'
 sleep 10
