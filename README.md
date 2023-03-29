@@ -3,6 +3,8 @@ remark42 with webmentiond rootless with Pingback and MailHog
 
 * will use a git repository under /srv to save everything
 * should be setup with a healtcheck to /ping to prevent split-brain and telegram 409 problems
+ 
+![](./img/remark42_rootless_storage_example.png)
 
 ## endpoints
 
