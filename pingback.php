@@ -2,8 +2,10 @@
 //from https://github.com/w3c/webmention/blob/master/pingback.php
 $body = trim(file_get_contents('php://input'));
 
-$emptys=shell_exec("test -e touch /tmp/.incoming_http_hosts/ || mkdir touch /tmp/.incoming_http_hosts/" );
-$emptys=shell_exec("touch /tmp/.incoming_http_hosts/".$_SERVER["HTTP_HOST"] );
+if (!file_exists('/tmp/.incoming_http_hosts/')) {
+    mkdir('/tmp/.incoming_http_hosts/', 0777, true);
+}
+file_put_contents("/tmp/.incoming_http_hosts/".$_SERVER["HTTP_HOST"])
 
 if(!$body) {
   header('HTTP/1.1 405 Method Not Allowed');
