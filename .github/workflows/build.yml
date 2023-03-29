@@ -95,7 +95,7 @@ jobs:
         run: docker image ls
       - name: build images
 #        run: sudo /bin/bash -c "export REGISTRY_PASSWORD=$REGISTRY_PASSWORD;export REGISTRY_HOST=docker.io;export REGISTRY_PROJECT=thefoundation;export PROJECT_NAME=hocker;export REGISTRY_USER=${{ secrets.REGISTRY_USER }} ;bash _build_hocker.sh base-focal "
-        run: git clone https://github.com/umputun/baseimage.git /tmp/baseimage && cd /tmp/baseimage && 	docker buildx build --platform ${PLATFORMS}  --pull --cache-to=type=registry,ref=$BUILDCACHE:baseimage_buildgo --cache-from=type=registry,ref=$BUILDCACHE:baseimage_buildgo -t $CI_REGISTRY_IMAGE:baseimage_buildgo build.go -f build.go/Dockerfile
+        run: git clone https://github.com/umputun/baseimage.git /tmp/baseimage && (cd /tmp/baseimage ;	docker buildx build --platform ${PLATFORMS}  --pull --cache-to=type=registry,ref=$BUILDCACHE:baseimage_buildgo --cache-from=type=registry,ref=$BUILDCACHE:baseimage_buildgo -t $CI_REGISTRY_IMAGE:baseimage_buildgo build.go -f build.go/Dockerfile)
       - name: show files
 #        run: bash -c "ls buildlogs/  -lh1 ; tail -n 20 buildlogs/*"
         run: docker image ls 
@@ -166,7 +166,7 @@ jobs:
         run: docker image ls
       - name: build images
 #        run: sudo /bin/bash -c "export REGISTRY_PASSWORD=$REGISTRY_PASSWORD;export REGISTRY_HOST=docker.io;export REGISTRY_PROJECT=thefoundation;export PROJECT_NAME=hocker;export REGISTRY_USER=${{ secrets.REGISTRY_USER }} ;bash _build_hocker.sh base-focal "
-        run: git clone https://github.com/mailhog/MailHog.git /tmp/mailhog && cd /tmp/mailhog && 	docker buildx build --platform ${PLATFORMS}  --pull --cache-to=type=registry,ref=$BUILDCACHE:mailhog --cache-from=type=registry,ref=$BUILDCACHE:mailhog -t $CI_REGISTRY_IMAGE:mailhog build.go -f build.go/Dockerfile
+        run: git clone https://github.com/mailhog/MailHog.git /tmp/mailhog && ( cd /tmp/mailhog ; 	docker buildx build --platform ${PLATFORMS}  --pull --cache-to=type=registry,ref=$BUILDCACHE:mailhog --cache-from=type=registry,ref=$BUILDCACHE:mailhog -t $CI_REGISTRY_IMAGE:mailhog build.go -f build.go/Dockerfile)
       - name: show files
 #        run: bash -c "ls buildlogs/  -lh1 ; tail -n 20 buildlogs/*"
         run: docker image ls 
@@ -223,7 +223,7 @@ jobs:
       packages: write
       contents: read
     if: github.repository_owner == 'thefoundation-builder'
-    needs: [ build-base-go , build-base-webmentiond ]
+    needs: [ build-base-go , build-base-webmentiond, build-base-mailhog ]
     steps:
       - uses: actions/checkout@v3
       - name: Set up QEMU
