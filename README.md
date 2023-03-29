@@ -22,8 +22,8 @@ remark42 with webmentiond rootless with Pingback and MailHog
 | Name | Type | example |
 |---|---|---|
 | GIT_REPO_SYNC   | git URL | `git@gitlab.generic.lan:the-foundation/my-comments-store` | 
-| GIT_REPO_KEY    | `LS0tLS` ..long base64 text.. `LS0tLS0K` |
-| GIT_REPO_PUBKEY | `c3NoLXJzY` ..long base64 text.. `bi1UUDIzCg==` | 
+| GIT_REPO_KEY    | base64 | `LS0tLS` ..long base64 text.. `LS0tLS0K` |
+| GIT_REPO_PUBKEY | base64 | `c3NoLXJzY` ..long base64 text.. `bi1UUDIzCg==` | 
 
 For the  other parameters:
 
