@@ -32,7 +32,7 @@ For the  other parameters:
 
 
 
-## Remarks42 Prameter list:
+## Remarks42 Parameter list:
 
 
 | Command line                   | Environment                    | Default                  | Description                                               |
