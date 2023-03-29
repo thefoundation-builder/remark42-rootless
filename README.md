@@ -1,8 +1,8 @@
 remark42 with webmentiond rootless with Pingback and MailHog
 
 
-- sends auth mail via mailhog
-- will only send mail to mailhog, you need to release it from there for external comments
+* will use a git repository under /srv to save everything
+* 
 
 ## endpoints
 
@@ -13,11 +13,19 @@ remark42 with webmentiond rootless with Pingback and MailHog
 | PingBack (RECEIVE) | Y |  /webmentions/pingback |
 | Ping | N |  /ping |
 
-## endpoints
 
-| NAME | Example Value | Explanation |
+## parameters
+| Name | Type | example |
 |---|---|---|
-| Ping | N |  /ping |
+| GIT_REPO_SYNC   | git URL | `git@gitlab.generic.lan:the-foundation/my-comments-store` | 
+| GIT_REPO_KEY    | `LS0tLS` ..long base64 text.. `LS0tLS0K` |
+| GIT_REPO_PUBKEY | `c3NoLXJzY` ..long base64 text.. `bi1UUDIzCg==` | 
+
+For the  other parameters:
+
+* refer to https://remark42.com/docs/configuration/parameters/
+* check https://github.com/zerok/webmentiond/blob/main/docs/getting-started.md
+
 
 
 ---
