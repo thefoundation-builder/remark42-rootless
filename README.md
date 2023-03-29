@@ -8,10 +8,12 @@ remark42 with webmentiond rootless with Pingback and MailHog
 
 | Type | protected | URL |
 |---|---|---|
-| Mail | Y |  /mail |
-| Webmentions (RECEIVE) | Y |  /webmentions/receive |
-| PingBack (RECEIVE) | Y |  /webmentions/pingback |
+
+| Webmentions (RECEIVE) | N |  /webmentions/receive |
+| PingBack (RECEIVE) | N |  /webmentions/pingback |
 | Ping | N |  /ping |
+| Mailhog | Y |  /mail |
+
 
 
 ## parameters
