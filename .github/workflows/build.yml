@@ -95,7 +95,7 @@ jobs:
         run: docker image ls
       - name: build images
 #        run: sudo /bin/bash -c "export REGISTRY_PASSWORD=$REGISTRY_PASSWORD;export REGISTRY_HOST=docker.io;export REGISTRY_PROJECT=thefoundation;export PROJECT_NAME=hocker;export REGISTRY_USER=${{ secrets.REGISTRY_USER }} ;bash _build_hocker.sh base-focal "
-        run: git clone https://github.com/umputun/baseimage.git /tmp/baseimage && (cd /tmp/baseimage ;	docker buildx build --platform ${PLATFORMS}  --pull --cache-to=type=registry,ref=$BUILDCACHE:baseimage_buildgo --cache-from=type=registry,ref=$BUILDCACHE:baseimage_buildgo -t $CI_REGISTRY_IMAGE:baseimage_buildgo build.go -f build.go/Dockerfile)
+        run: git clone https://github.com/umputun/baseimage.git /tmp/baseimage && (cd /tmp/baseimage ;	docker buildx build --platform ${PLATFORMS}  --push --pull --cache-to=type=registry,ref=$BUILDCACHE:baseimage_buildgo --cache-from=type=registry,ref=$BUILDCACHE:baseimage_buildgo -t $CI_REGISTRY_IMAGE:github_umputun_baseimage build.go -f build.go/Dockerfile)
       - name: show files
 #        run: bash -c "ls buildlogs/  -lh1 ; tail -n 20 buildlogs/*"
         run: docker image ls 
@@ -127,16 +127,16 @@ jobs:
       - name: Available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
       - name: current images
-        run: bash -c "docker pull $CI_REGISTRY_IMAGE:baseimage_buildgo;docker image ls "
-      - name: Trivy vulnerability scan @ baseimage-focal
+        run: bash -c "docker pull $CI_REGISTRY_IMAGE:$CI_REGISTRY_IMAGE:github_umputun_baseimage;docker image ls "
+      - name: Trivy vulnerability scan @ github_umputun_baseimage
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '$CI_REGISTRY_IMAGE:baseimage_buildgo'
+          image-ref: '$CI_REGISTRY_IMAGE:github_umputun_baseimage'
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
-      - name: Upload Trivy scan results to GitHub Security tab @ baseimage-focal
+      - name: Upload Trivy scan results to GitHub Security tab @ github_umputun_baseimage
         uses: github/codeql-action/upload-sarif@main
         with:
           sarif_file: "trivy-results.sarif"
@@ -202,7 +202,7 @@ jobs:
         run: docker image ls
       - name: build images
 #        run: sudo /bin/bash -c "export REGISTRY_PASSWORD=$REGISTRY_PASSWORD;export REGISTRY_HOST=docker.io;export REGISTRY_PROJECT=thefoundation;export PROJECT_NAME=hocker;export REGISTRY_USER=${{ secrets.REGISTRY_USER }} ;bash _build_hocker.sh base-focal "
-        run: git clone https://github.com/zerok/webmentiond.git /tmp/webmentiond && cd /tmp/webmentiond && 	docker buildx build --platform ${PLATFORMS}  --pull --cache-to=type=registry,ref=$BUILDCACHE:webmentiond --cache-from=type=registry,ref=$BUILDCACHE:webmentiond -t $CI_REGISTRY_IMAGE:webmentiond build.go -f build.go/Dockerfile
+        run: git clone https://github.com/zerok/webmentiond.git /tmp/webmentiond && (  cd /tmp/webmentiond ; 	docker buildx build --platform ${PLATFORMS}  --pull --push --cache-to=type=registry,ref=$BUILDCACHE:webmentiond --cache-from=type=registry,ref=$BUILDCACHE:webmentiond -t $CI_REGISTRY_IMAGE:webmentiond . -f Dockerfile )
       - name: show files
 #        run: bash -c "ls buildlogs/  -lh1 ; tail -n 20 buildlogs/*"
         run: docker image ls 
@@ -237,7 +237,7 @@ jobs:
         run: docker image ls
       - name: build images
 #        run: sudo /bin/bash -c "export REGISTRY_PASSWORD=$REGISTRY_PASSWORD;export REGISTRY_HOST=docker.io;export REGISTRY_PROJECT=thefoundation;export PROJECT_NAME=hocker;export REGISTRY_USER=${{ secrets.REGISTRY_USER }} ;bash _build_hocker.sh php5 "
-        run: git clone https://github.com/umputun/remark42.git &&  /tmp/remark42 &&  cd /tmp/remark42 && sed 's~^FROM umputun/baseimage:buildgo.\+~FROM '$CI_REGISTRY_IMAGE:baseimage_buildgo'~g;s~FROM.\+:webmentiond~'$CI_REGISTRY_IMAGE:webmentiond build.go'~g;s~FROM.\+:mailhog~'$CI_REGISTRY_IMAGE:mailhog build.go'~g' -i Dockerfile && docker-buildx build       --platform ${PLATFORMS}      --tag $CI_REGISTRY_IMAGE:remark42-multiarch       -f Dockerfile --push  . 
+        run: git clone https://github.com/umputun/remark42.git  /tmp/remark42 &&  ( cd /tmp/remark42 ; sed 's~^FROM umputun/baseimage:buildgo.\+~FROM '$CI_REGISTRY_IMAGE:baseimage_buildgo'~g;s~FROM.\+:webmentiond~'$CI_REGISTRY_IMAGE:webmentiond'~g;s~FROM.\+:mailhog~'$CI_REGISTRY_IMAGE:mailhog'~g' -i Dockerfile && docker-buildx build       --platform ${PLATFORMS}      --tag $CI_REGISTRY_IMAGE:remark42-multiarch       -f Dockerfile --push  . )
       - name: show files
         #run: bash -c "ls buildlogs/  -lh1 ; tail -n 20 buildlogs/*"
         run: docker image ls 
